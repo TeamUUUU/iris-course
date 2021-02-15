@@ -1,0 +1,12 @@
+version: '3.6'
+services:
+  iris:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports: 
+      - "9098:52773"
+    volumes:
+      - "./www:/usr/irissys/csp/irisapp/"
+    container_name: iris_bmstu

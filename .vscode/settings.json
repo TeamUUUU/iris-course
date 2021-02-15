@@ -1,0 +1,17 @@
+{
+    "files.associations": {  
+        "Dockerfile*": "dockerfile",
+    },
+    "objectscript.conn" :{
+        "server": "bmstu",
+        "active": true,
+        "ns": "IRISAPP",
+        "links": {
+            "CurrentPage in IRISAPP": "http://${host}:${port}/csp/${namespace}/${classname}"
+        },
+        "docker-compose": {
+            "service": "iris",
+            "internalPort": 52773
+        }
+    }
+}
