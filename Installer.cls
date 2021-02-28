@@ -22,6 +22,8 @@ XData setup
       AuthenticationMethods="64"
     />
   </Namespace>
+  <Invoke Class="App.Installer" Method="RestWebApp" CheckStatus="true"></Invoke>
+  <Invoke Class="App.Installer" Method="ModifyIrisapp" CheckStatus="true"></Invoke>
 
 </Manifest>
 }
@@ -34,31 +36,33 @@ ClassMethod setup(ByRef pVars, pLogLevel As %Integer = 3, pInstaller As %Install
 
 ClassMethod RestWebApp() As %Status
 {
-  set namespace = $NAMESPACE
-  zn "%SYS"
-  write "Create web application ..."
-  set webName = "/bmstuapi"
-  set webProperties("DispatchClass") = "API.REST"
-  set webProperties("NameSpace") = "IRISAPP"
-  set webProperties("Enabled") = 1
-  set webProperties("AutheEnabled") = 64
-  set webProperties("MatchRoles")=":%DB_IRISAPP"
-  set sc = ##class(Security.Applications).Create(webName, .webProperties)
-  write:'sc sc
-  write:sc "Web application "_webName_" has been created!"
-  zn namespace
+  Set namespace = $NAMESPACE
+  Zn "%SYS"
+  Write "Create web application ..."
+  Set webName = "/bmstuapi"
+  Set webProperties("DispatchClass") = "API.REST"
+  Set webProperties("NameSpace") = "IRISAPP"
+  Set webProperties("Enabled") = 1
+  Set webProperties("AutheEnabled") = 64
+  Set webProperties("MatchRoles")=":%DB_IRISAPP"
+  Set sc = ##class(Security.Applications).Create(webName, .webProperties)
+  Write:'sc sc
+  Write:sc "Web application "_webName_" has been created!"_$$$NL
+  Zn namespace
+  Return $$$OK
 }
 
 ClassMethod ModifyIrisapp() As %Status
 {
-  set namespace = $NAMESPACE
-  zn "%SYS"
-  set webName = "/csp/irisapp"
-  set webProperties("MatchRoles")=":%DB_IRISAPP"
-  set sc = ##class(Security.Applications).Modify(webName, .webProperties)
-  write:'sc sc
-  write:sc "Web application "_webName_" has been modified!"
-  zn namespace
+  Set namespace = $NAMESPACE
+  Zn "%SYS"
+  Set webName = "/csp/irisapp"
+  Set webProperties("MatchRoles")=":%DB_IRISAPP"
+  Set sc = ##class(Security.Applications).Modify(webName, .webProperties)
+  Write:'sc sc
+  Write:sc "Web application "_webName_" has been modified!"_$$$NL
+  Zn namespace
+  Return $$$OK
 }
 
 }
