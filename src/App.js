@@ -1,11 +1,11 @@
 
-import { FormFiller } from "./components/FormFiller";
-import { formExample } from './testData';
+import { FormAnswers } from "./components/FormAnswers";
+import { formExample, answersExample } from './testData';
 
 const App = () => {
 
 	return (
-		<FormFiller formSchema={formExample} />
+		<FormAnswers formSchema={formExample} formAnswers={answersExample} />
 	);
 }
 

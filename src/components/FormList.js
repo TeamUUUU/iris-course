@@ -30,7 +30,7 @@ export const FormList = ({ formList, onView = defCallback }) => {
 			render: (record) => (
 				<Button onClick={() => onView(record.id)}>View results</Button>
 			),
-		  },
+		},
 	];
 
 	return (
@@ -41,6 +41,7 @@ export const FormList = ({ formList, onView = defCallback }) => {
 			}
 		})}
 			columns={columns}
-			pagination={false}/>
+			pagination={false}
+			sticky={true} />
 	);
 }

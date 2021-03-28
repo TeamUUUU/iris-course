@@ -23,16 +23,40 @@ export const formListExample = [
 	},
 ];
 
-export const formExample =
-{
+export const formExample = {
 	title: "Test form",
 	type: "object",
 	properties: {
 		name: {
+			title: "Name",
 			type: "string"
 		},
 		age: {
+			title: "Age",
 			type: "number"
 		}
 	}
 };
+
+export const answersExample = [
+	{
+		name: "Bob",
+		age: 15
+	},
+	{
+		name: "Alice",
+		age: 23
+	},
+	{
+		name: "John",
+		age: 55
+	},
+	{
+		name: "Tom",
+		age: 7
+	},
+	{
+		name: "Jerry",
+		age: 5
+	},
+];
