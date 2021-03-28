@@ -1,10 +1,11 @@
 
-import { FormEditor } from "./components/FormEditor";
+import { FormList } from "./components/FormList";
+import { formList } from './testData';
 
 const App = () => {
 
 	return (
-		<FormEditor />
+		<FormList formList={formList} />
 	);
 }
 
