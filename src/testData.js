@@ -1,5 +1,5 @@
 
-export const formList = [
+export const formListExample = [
 	{
 		title: "Android vs iPhone",
 		dateFrom: "01.01.2021",
@@ -22,3 +22,17 @@ export const formList = [
 		id: "ol748d"
 	},
 ];
+
+export const formExample =
+{
+	title: "Test form",
+	type: "object",
+	properties: {
+		name: {
+			type: "string"
+		},
+		age: {
+			type: "number"
+		}
+	}
+};

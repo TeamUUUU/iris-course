@@ -1,11 +1,11 @@
 
-import { FormList } from "./components/FormList";
-import { formList } from './testData';
+import { FormFiller } from "./components/FormFiller";
+import { formExample } from './testData';
 
 const App = () => {
 
 	return (
-		<FormList formList={formList} />
+		<FormFiller formSchema={formExample} />
 	);
 }
 
