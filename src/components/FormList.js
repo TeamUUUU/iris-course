@@ -1,10 +1,9 @@
 
-import { Table, Button } from 'antd';
+import { Table } from 'antd';
 import 'antd/dist/antd.css';
+import { Link } from "react-router-dom";
 
-const defCallback = (r) => console.log(r);
-
-export const FormList = ({ formList, onView = defCallback }) => {
+export const FormList = ({ formList}) => {
 
 	const columns = [
 		{
@@ -28,7 +27,7 @@ export const FormList = ({ formList, onView = defCallback }) => {
 			title: 'Action',
 			key: 'action',
 			render: (record) => (
-				<Button onClick={() => onView(record.id)}>View results</Button>
+				<Link to={`/answers/${record.id}`}>View results</Link>
 			),
 		},
 	];

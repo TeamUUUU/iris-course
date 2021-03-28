@@ -5,13 +5,14 @@ import 'antd/dist/antd.css';
 
 export const FormAnswers = ({ formAnswers, formSchema }) => {
 
-	const columns = Object.entries(formSchema.properties).map(([field, data]) => {
-		const title = data.title ?? field;
-		return {
-			title: title,
-			dataIndex: field
-		};
-	});
+	const columns = Object.entries(formSchema.properties)
+		.map(([field, data]) => {
+			const title = data.title ?? field;
+			return {
+				title: title,
+				dataIndex: field
+			};
+		});
 
 	return (
 		<Table dataSource={formAnswers.map((v, idx) => {
