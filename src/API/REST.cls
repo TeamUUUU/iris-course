@@ -15,10 +15,13 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 
 ClassMethod Test() As %Status
 {
-  Set currentDate = $ZDate($Now(), 3)
-  Set obj = {"msg":"It works","today": (currentDate)}
-  Write obj.%ToJSON()
-  Return $$$OK
+  set c = ##class(Domain.User).%New()
+  set c.Email = "kek@pep.ru"
+  do c.%Save()
+  set st = c.%JSONExportToString(.str)
+  Return:($$$ISERR(st)) st
+  write str
+  return $$$OK
 }
 
 }
