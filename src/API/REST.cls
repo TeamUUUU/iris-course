@@ -9,19 +9,19 @@ Parameter CONTENTTYPE = "application/json";
 XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 {
 <Routes>
-  <Route Url="/test" Method="GET" Call="Test"/>
+  <Route Url="/signup" Method="POST" Call="SignUp"/>
 </Routes>
 }
 
-ClassMethod Test() As %Status
+ClassMethod SignUp() As %Status
 {
-  set c = ##class(Domain.User).%New()
-  set c.Email = "kek@pep.ru"
-  do c.%Save()
-  set st = c.%JSONExportToString(.str)
-  Return:($$$ISERR(st)) st
+
+  Set cm = ##class(FormsConstructor.User).%JSONNew()
+  Do cm.%JSONImport(%request.Content)
+  Do cm.%JSONExportToString(.str)
+  Do cm.%Save()
   write str
-  return $$$OK
+  Quit $$$OK
 }
 
 }
