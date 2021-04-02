@@ -22,6 +22,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+    get:
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User Object with Email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
 
             
 
@@ -66,8 +80,14 @@ paths:
               schema:
                 $ref: "#/components/schemas/GeneralError"
 
-  /forms/{form_link}:
+  /forms:
     get:
+      parameters:
+        - in: query
+          name: link
+          required: true
+          schema:
+            type: string
       operationId: "getFormByLink"
       responses:
         "200":
@@ -82,6 +102,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GeneralError"
+
+  /forms/{form_id}:
+    get:
+      parameters:
+        - in: path
+          name: form_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: "Form"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Form'
 
   /forms/{form_id}/fields:
     get:
@@ -319,9 +356,10 @@ components:
           format: int64
 
     Submissions:
-      type: array
-      items:
-        $ref: "#/components/schemas/Submission"
+      type: object 
+      properties:
+        items:
+          $ref: "#/components/schemas/Submission"
 
     Form:
       type: object
@@ -334,11 +372,11 @@ components:
         subtitle:
           type: string
         available_from:
-          type: string
-          format: date-time
+          type: integer 
+          format: int64
         available_to:
-          type: string
-          format: date-time
+          type: integer 
+          format: int64
         json_schema:
           type: string
         link:
@@ -352,11 +390,11 @@ components:
         subtitle:
           type: string
         available_from:
-          type: string
-          format: date-time
+          type: integer 
+          format: int64
         available_to:
-          type: string
-          format: date-time
+          type: integer 
+          format: int64
         json_schema:
           type: string
         fields:
