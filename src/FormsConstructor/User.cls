@@ -1,11 +1,15 @@
 Class FormsConstructor.User Extends (%Persistent, %JSON.Adaptor)
 {
 
-Property Email As %String;
+Property ID As %Integer(%JSONINCLUDE = "OUTPUTONLY") [ Identity ];
+
+Property Email As %String(%JSONFIELDNAME = "email");
+
+Relationship Forms As FormsConstructor.Form [ Cardinality = many, Inverse = User ];
 
 Storage Default
 {
-<Data name="ClientDefaultData">
+<Data name="UserDefaultData">
 <Value name="1">
 <Value>%%CLASSNAME</Value>
 </Value>
