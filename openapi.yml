@@ -1,63 +1,87 @@
 openapi: "3.0.3"
+servers:
+  - url: http://localhost:9098/bmstuapi
 info:
   version: 1.0.0
   title: Forms Consctructor API
 paths:
-  /forms:
+  /users:
     put:
-      operationId: "createForm"
+      operationId: "createUser"
       requestBody:
-          description: Create form
-          required: true
+        description: Create User
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        "200":
+          description: Created User Object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FormCreate'
+                $ref: '#/components/schemas/User'
+
+            
+
+  /users/{user_id}/forms:
+    parameters:
+      - $ref: '#/components/parameters/UserID'
+    put:
+      operationId: "createForm"
+      requestBody:
+        description: Create form
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormCreate"
       responses:
-        '200':
+        "200":
           description: Created Form Object
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Form'
+                $ref: "#/components/schemas/Form"
         default:
           description: unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
+                $ref: "#/components/schemas/GeneralError"
     get:
       operationId: "getForms"
       responses:
-        '200':
+        "200":
           description: Forms created by current user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Forms'
+                $ref: "#/components/schemas/Forms"
         default:
           description: unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
+                $ref: "#/components/schemas/GeneralError"
 
   /forms/{form_link}:
     get:
       operationId: "getFormByLink"
       responses:
-        '200':
+        "200":
           description: "From description by unique link"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Form'
+                $ref: "#/components/schemas/Form"
         default:
           description: unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
+                $ref: "#/components/schemas/GeneralError"
 
   /forms/{form_id}/fields:
     get:
@@ -70,21 +94,21 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: "Fields of specified form"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fields'
+                $ref: "#/components/schemas/Fields"
         default:
           description: unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
- 
+                $ref: "#/components/schemas/GeneralError"
+
   /forms/{form_id}/submissions:
-    get:
+    get:    
       operationId: "getFormSubmissions"
       parameters:
         - name: form_id
@@ -94,18 +118,18 @@ paths:
             type: integer
             format: int64
       responses:
-        '200':
+        "200":
           description: "Submissions of specified form"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Submissions'
+                $ref: "#/components/schemas/Submissions"
         default:
           description: unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GeneralError'
+                $ref: "#/components/schemas/GeneralError"
     put:
       operationId: "createFormSubmission"
       parameters:
@@ -120,24 +144,36 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubmissionCreate'
+              $ref: "#/components/schemas/SubmissionCreate"
       responses:
-        '200':
+        "200":
           description: "Submissions of specified form"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Submission'
+                $ref: "#/components/schemas/Submission"
 components:
   schemas:
     GeneralError:
       type: object
       properties:
-        status:
+        error:
+          type: string
+    
+    UserCreate:
+      properties:
+        email:
+          type: string
+        
+    User:
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
           type: string
 
     Field:
-      type: object
       properties:
         id:
           type: integer
@@ -158,12 +194,34 @@ components:
             - "text"
             - "flag"
 
+    FieldCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+        position:
+          type: integer
+        form_id:
+          type: integer
+          format: int64
+        type:
+          type: string
+          enum:
+            - "number"
+            - "text"
+            - "flag"
 
     TextRecord:
       type: object
       properties:
         id:
           type: integer
+        type:
+          type: string
+          enum:
+            - "text"
         value:
           type: string
         field_id:
@@ -174,6 +232,10 @@ components:
       properties:
         id:
           type: integer
+        type:
+          type: string
+          enum:
+            - "flag"
         value:
           type: boolean
         field_id:
@@ -184,11 +246,15 @@ components:
       properties:
         id:
           type: integer
+        type:
+          type: string
+          enum:
+            - "number"
         value:
           type: number
         field_id:
           type: integer
-    
+
     TextRecordCreate:
       type: object
       properties:
@@ -221,13 +287,13 @@ components:
         date:
           type: string
           format: date-time
-        records: 
+        records:
           type: array
           items:
             oneOf:
-              - $ref: '#/components/schemas/FlagRecordCreate'
-              - $ref: '#/components/schemas/TextRecordCreate'
-              - $ref: '#/components/schemas/NumberRecordCreate'
+              - $ref: "#/components/schemas/FlagRecordCreate"
+              - $ref: "#/components/schemas/TextRecordCreate"
+              - $ref: "#/components/schemas/NumberRecordCreate"
         form_id:
           type: integer
           format: int64
@@ -241,21 +307,21 @@ components:
         date:
           type: string
           format: date-time
-        records: 
+        records:
           type: array
           items:
             oneOf:
-              - $ref: '#/components/schemas/FlagRecord'
-              - $ref: '#/components/schemas/TextRecord'
-              - $ref: '#/components/schemas/NumberRecord'
+              - $ref: "#/components/schemas/FlagRecord"
+              - $ref: "#/components/schemas/TextRecord"
+              - $ref: "#/components/schemas/NumberRecord"
         form_id:
           type: integer
           format: int64
-    
+
     Submissions:
       type: array
       items:
-        $ref: '#/components/schemas/Submission'
+        $ref: "#/components/schemas/Submission"
 
     Form:
       type: object
@@ -275,7 +341,7 @@ components:
           format: date-time
         json_schema:
           type: string
-        link: 
+        link:
           type: string
 
     FormCreate:
@@ -293,41 +359,32 @@ components:
           format: date-time
         json_schema:
           type: string
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldCreate"
+
     Forms:
-      type: array
-      items:
-        $ref: '#/components/schemas/Form'
-    
+      type: object
+      properties:
+        forms:
+          type: array
+          items:
+            $ref: "#/components/schemas/Form"
+
     Fields:
-      type: array
-      items:
-        $ref: '#/components/schemas/Field'
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/Field"
 
   parameters:
-    skipParam:
-      name: skip
-      in: query
-      description: number of items to skip
+    UserID:
+      name: user_id 
       required: true
+      in: path
       schema:
         type: integer
-        format: int32
-    limitParam:
-      name: limit
-      in: query
-      description: max records to return
-      required: true
-      schema:
-        type: integer
-        format: int32
-  responses:
-    NotFound:
-      description: Entity not found.
-    IllegalInput:
-      description: Illegal input for operation.
-    GeneralError:
-      description: General Error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GeneralError'
+        format: int64
