@@ -13,60 +13,63 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
       <Route Url="/users/:UserID/forms" Method="GET" Call="GetForms"/>
       <Route Url="/forms/:FormLink" Method="GET" Call="GetFormByLink"/>
       <Route Url="/forms/:FormID/fields" Method="GET" Call="GetFieldsByForm"/>
+      <Route Url="/forms/:FormID/submissions" Method="PUT" Call="PutSubmission"/>
+      <Route Url="/forms/:FormID/submissions" Method="GET" Call="GetFormSubmissions"/>
     </Routes>
 }
 
 ClassMethod CreateUser() As %Status
 {
-
-    Set cm = ##class(FormsConstructor.User).%New()
-    Set sc= cm.%JSONImport(%request.Content)
-    If $$$ISERR(sc) {
-        Set err = $SYSTEM.Status.GetErrorText(sc)
-        Write err
-        Quit sc
+    Try{
+        Set cm = ##class(FormsConstructor.User).%New()
+        Set sc= cm.%JSONImport(%request.Content)
+        $$$ThrowOnError(sc)
+        Do cm.%Save()
+        Do cm.%JSONExport()
+    } Catch ex {
+        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
+        Set ret = {}
+        Set ret.status = status
+        Write ret.%ToJSON()
+        Return ex
     }
-    Do cm.%Save()
-    Do cm.%JSONExportToString(.str)
-    Write str
     Quit $$$OK
 }
 
 ClassMethod PutForm(UserID As %Integer) As %Status
 {
-    try {
-    Set user = ##class(FormsConstructor.User).%OpenId(UserID)
-    Set userID = user.%Id()
-    Kill user
-    Set form = ##class(FormsConstructor.Form).%New()
+    Try {
+        Set user = ##class(FormsConstructor.User).%OpenId(UserID)
+        Set userID = user.%Id()
+        Kill user
+        Set form = ##class(FormsConstructor.Form).%New()
 
-    Set sc = form.%JSONImport(%request.Content)
-    $$$ThrowOnError(sc)
+        Set sc = form.%JSONImport(%request.Content)
+        $$$ThrowOnError(sc)
 
-    Do form.UserSetObjectId(userID)
-    Do form.%Save()
+        Do form.UserSetObjectId(userID)
+        Do form.%Save()
 
-    Set fields = ##class(FormsConstructor.Fields).%New()
+        Set fields = ##class(FormsConstructor.Fields).%New()
 
-    Set sc = fields.%JSONImport(%request.Content)
-    $$$ThrowOnError(sc)
+        Set sc = fields.%JSONImport(%request.Content)
+        $$$ThrowOnError(sc)
 
-    For i = 1:1:(fields.Fields.Count()) {
-        Set field = fields.Fields.GetAt(i)
-        Do form.Fields.Insert(field)
-    }
+        For i = 1:1:(fields.Fields.Count()) {
+            Set field = fields.Fields.GetAt(i)
+            Do form.Fields.Insert(field)
+        }
 
-    Set form.Link = ##class(FormsConstructor.Form).GenerateLink() 
-    Set sc = form.%Save()
-    $$$ThrowOnError(sc)
+        Set form.Link = ##class(FormsConstructor.Form).GenerateLink() 
+        Set sc = form.%Save()
+        $$$ThrowOnError(sc)
 
-    Do form.%JSONExportToString(.str)
-    Write str
-    } catch ex {
-        Set status = $System.Status.GetErrorText(ex.AsStatus())
+        Do form.%JSONExport()
+    } Catch ex {
+        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
         Set ret = {}
         Set ret.status = status
-        write ret.%ToJSON()
+        Write ret.%ToJSON()
         Return ex
     }
     Quit $$$OK
@@ -74,59 +77,145 @@ ClassMethod PutForm(UserID As %Integer) As %Status
 
 ClassMethod GetForms(UserID As %Integer) As %Status
 {
-    Set user = ##class(FormsConstructor.User).%OpenId(UserID)
-    Set forms = ##class(FormsConstructor.Forms).%New()
-    Set key = ""
-    Do {
-        Set form = user.Forms.GetNext(.key)
-        If (form '= "") {
-            Do forms.Forms.Insert(form)
-        }
-    } While (key '= "")
+    Try {
+        Set user = ##class(FormsConstructor.User).%OpenId(UserID)
+        Set forms = ##class(FormsConstructor.Forms).%New()
+        Set key = ""
+        Do {
+            Set form = user.Forms.GetNext(.key)
+            If (form '= "") {
+                Do forms.Forms.Insert(form)
+            }
+        } While (key '= "")
 
-   Do forms.%JSONExportToString(.str)
-   Write str
+        Do forms.%JSONExport()
+    } Catch ex {
+        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
+        Set ret = {}
+        Set ret.status = status
+        Write ret.%ToJSON()
+        Return ex
+    }
    Quit $$$OK
 }
 
 ClassMethod GetFormByLink(FormLink As %String) As %Status
 {
     Set sc = $$$OK
-    Set statement=##class(%SQL.Statement).%New()
-    Set status=statement.%PrepareClassQuery("FormsConstructor.Form","ByLink")
-    $$$ThrowOnError(status)
-    Set stResults=statement.%Execute(FormLink)
-    Do stResults.%Next()
-    $$$ThrowOnError(stResults)
-    Set form = ##class(FormsConstructor.Form).%New()
-    Set form.ID = stResults.%Get("ID")
-    Set form.Title = stResults.%Get("Title")
-    Set form.Link = stResults.%Get("Link")
-    set form.AvailableFrom = stResults.%Get("AvailableFrom")
-    set form.AvailableTo = stResults.%Get("AvailableTo")
-    set form.JsonSchema = stResults.%Get("JsonSchema")
-    Set sc = form.%JSONExportToString(.str)
-    $$$ThrowOnError(sc)
-    Write str
+    Try {
+        Set statement=##class(%SQL.Statement).%New()
+        Set status=statement.%PrepareClassQuery("FormsConstructor.Form","ByLink")
+        $$$ThrowOnError(status)
+        Set stResults=statement.%Execute(FormLink)
+        Do stResults.%Next()
+        $$$ThrowOnError(stResults)
+        Set form = ##class(FormsConstructor.Form).%New()
+        Set form.ID = stResults.%Get("ID")
+        Set form.Title = stResults.%Get("Title")
+        Set form.Link = stResults.%Get("Link")
+        Set form.AvailableFrom = stResults.%Get("AvailableFrom")
+        Set form.AvailableTo = stResults.%Get("AvailableTo")
+        Set form.JsonSchema = stResults.%Get("JsonSchema")
+        Set form.UserID = stResults.%Get("User")
+        Set sc = form.%JSONExport()
+        $$$ThrowOnError(sc)
+    } Catch ex {
+        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
+        Set ret = {}
+        Set ret.status = status
+        Write ret.%ToJSON()
+        Return ex
+    }
     Return sc
 }
 
 ClassMethod GetFieldsByForm(FormID As %Integer) As %Status
 {
     Set sc = $$$OK
-    Set form = ##class(FormsConstructor.Form).%OpenId(FormID)
-    Set fields = ##class(FormsConstructor.Fields).%New()
-    Set key = ""
-    Do {
-        Set field = form.Fields.GetNext(.key)
-        If (field '= "") {
-            Do fields.Fields.Insert(field)
-        }
-    } While (key '= "")
+    Try {
+        Set form = ##class(FormsConstructor.Form).%OpenId(FormID)
+        Set fields = ##class(FormsConstructor.Fields).%New()
+        Set key = ""
+        Do {
+            Set field = form.Fields.GetNext(.key)
+            If (field '= "") {
+                Do fields.Fields.Insert(field)
+            }
+        } While (key '= "")
 
-   Do fields.%JSONExportToString(.str)
-   Write str
+        Do fields.%JSONExport(.str)
+    } Catch ex {
+        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
+        Set ret = {}
+        Set ret.status = status
+        Write ret.%ToJSON()
+        Return ex
+    }
    Quit $$$OK
+}
+
+ClassMethod PutSubmission(FormID As %Integer) As %Status
+{
+    Set sc = $$$OK
+    Try {
+        Set submission = ##class(FormsConstructor.Submission).%New()
+        Set sc = submission.%JSONImport(%request.Content)
+        $$$ThrowOnError(sc)
+        Set recordsJson = {}.%FromJSON(%request.Content)
+        Set iter = recordsJson.records.%GetIterator()
+        While iter.%GetNext(.key , .value ) {
+            If value.%Get("type") = "number" {
+                Set nr = ##class(FormsConsctructor.NumberRecord).%New()
+                Do nr.%JSONImport(value)
+                Do submission.NumberRecords.Insert(nr)
+            } 
+            If value.%Get("type") = "text" {
+                Set nr = ##class(FormsConsctructor.TextRecord).%New()
+                Do nr.%JSONImport(value)
+                Do submission.TextRecords.Insert(nr)
+            }
+            If value.%Get("type") = "flag" {
+                Set nr = ##class(FormsConsctructor.FlagRecord).%New()
+                Do nr.%JSONImport(value)
+                Do submission.FlagRecords.Insert(nr)
+            }
+        }
+        Do submission.FormSetObjectId(FormID)
+        Do submission.%Save()
+    } Catch ex {
+        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
+        Set ret = {}
+        Set ret.status = status
+        Write ret.%ToJSON()
+        Return ex
+    }
+    Return sc
+}
+
+ClassMethod GetFormSubmissions(FormID As %Integer) As %Status
+{
+    Set sc = $$$OK
+    try {
+        Set submissions = ##class(FormsConsctructor.Submissions).%New()
+        Set form = ##class(FormsConstructor.Form).%OpenId(FormID)
+        Set key = ""
+        Do {
+            Set submission = form.Submissions.GetNext(.key)
+            If (submission '= "") {
+                Set sc = submission.FetchRecords()
+                $$$ThrowOnError(sc)
+                Do submissions.Submissions.Insert(submission)
+            }
+        } While (key '= "")
+        Do submissions.%JSONExport()
+    } catch ex {
+        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
+        Set ret = {}
+        Set ret.status = status
+        Write ret.%ToJSON()
+        Return ex
+    }
+    Return sc
 }
 
 }

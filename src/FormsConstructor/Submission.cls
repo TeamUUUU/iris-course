@@ -1,11 +1,49 @@
 Class FormsConstructor.Submission Extends (%Persistent, %JSON.Adaptor)
 {
 
-Property ID As %Integer [ Identity ];
+Parameter %JSONIGNOREINVALIDFIELD = 1;
 
-Property Date As %DateTime;
+Property ID As %Integer(%JSONFIELDNAME = "id", %JSONINCLUDE = "OUTPUTONLY") [ Identity ];
+
+Property Date As %PosixTime(%JSONFIELDNAME = "date");
+
+Property Records As list Of FormsConsctructor.Records(%JSONFIELDNAME = "records") [ Transient ];
 
 Relationship Form As FormsConstructor.Form [ Cardinality = one, Inverse = Submissions ];
+
+Relationship TextRecords As FormsConsctructor.TextRecord(%JSONINCLUDE = "none") [ Cardinality = many, Inverse = Submission ];
+
+Relationship NumberRecords As FormsConsctructor.NumberRecord(%JSONINCLUDE = "none") [ Cardinality = many, Inverse = Submission ];
+
+Relationship FlagRecords As FormsConsctructor.FlagRecord(%JSONINCLUDE = "none") [ Cardinality = many, Inverse = Submission ];
+
+Method FetchRecords() As %Status
+{
+    Set sc = $$$OK
+    Set key = ""
+    Do {
+        Set record = ..TextRecords.GetNext(.key)
+        If (record '= "") {
+            Do ..Records.Insert(record)
+            
+        }
+    } While (key '= "")
+    Do {
+        Set record = ..NumberRecords.GetNext(.key)
+        If (record '= "") {
+            Do ..Records.Insert(record)
+            
+        }
+    } While (key '= "")
+    Do {
+        Set record = ..FlagRecords.GetNext(.key)
+        If (record '= "") {
+            Do ..Records.Insert(record)
+            
+        }
+    } While (key '= "")
+    Return sc
+}
 
 Storage Default
 {

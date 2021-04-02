@@ -17,6 +17,8 @@ Property JsonSchema As %String(%JSONFIELDNAME = "json_schema") [ Required ];
 
 Property Link As %String(%JSONFIELDNAME = "link");
 
+Property UserID As %Integer(%JSONFIELDNAME = "user_id") [ Transient ];
+
 Relationship Fields As FormsConstructor.Field [ Cardinality = many, Inverse = Form ];
 
 Relationship Submissions As FormsConstructor.Submission [ Cardinality = many, Inverse = Form ];
@@ -32,9 +34,9 @@ ClassMethod GenerateLink() As %String
     Return link
 }
 
-Query ByLink(Link As %String = "") As %SQLQuery(CONTAINID = 1, ROWSPEC = "ID:%Integer,Title:%String,Link:%String,AvailableFrom:%PosixTime,AvailableTo:%PosixTime,JsonSchema:%String") [ SqlName = FC_Form_ByLink, SqlProc ]
+Query ByLink(Link As %String = "") As %SQLQuery(CONTAINID = 1, ROWSPEC = "ID:%Integer,Title:%String,Link:%String,AvailableFrom:%PosixTime,AvailableTo:%PosixTime,JsonSchema:%String,User:%Integer") [ SqlName = FC_Form_ByLink, SqlProc ]
 {
-SELECT ID, Title, Link, AvailableFrom, AvailableTo, JsonSchema
+SELECT ID, Title, Link, AvailableFrom, AvailableTo, JsonSchema, "User"
 FROM FormsConstructor.Form
 WHERE (%EXACT(Link) %STARTSWITH :Link)
 }
