@@ -3,7 +3,7 @@ Class FormsConstructor.Form Extends (%Persistent, %JSON.Adaptor)
 
 Parameter %JSONIGNOREINVALIDFIELD = 1;
 
-Property ID As %Integer(%JSONINCLUDE = "OUTPUTONLY") [ Identity ];
+Property ID As %Integer(%JSONFIELDNAME = "id", %JSONINCLUDE = "OUTPUTONLY") [ Identity ];
 
 Property Title As %String(%JSONFIELDNAME = "title") [ Required ];
 
@@ -19,13 +19,19 @@ Property Link As %String(%JSONFIELDNAME = "link");
 
 Property UserID As %Integer(%JSONFIELDNAME = "user_id") [ Transient ];
 
-Relationship Fields As FormsConstructor.Field [ Cardinality = many, Inverse = Form ];
+Relationship Fields As FormsConstructor.Field(%JSONINCLUDE = "none") [ Cardinality = many, Inverse = Form ];
 
-Relationship Submissions As FormsConstructor.Submission [ Cardinality = many, Inverse = Form ];
+Relationship Submissions As FormsConstructor.Submission(%JSONINCLUDE = "none") [ Cardinality = many, Inverse = Form ];
 
-Relationship User As FormsConstructor.User [ Cardinality = one, Inverse = Forms ];
+Relationship User As FormsConstructor.User(%JSONINCLUDE = "none") [ Cardinality = one, Inverse = Forms ];
 
 Index LinkIdx On Link [ Type = index, Unique ];
+
+/// Description
+Method UserIDGet() As %Status(%JSONINCLUDE="OUTPUTONLY",%JSONFIELDNAME="user_id")
+{
+    Return ..User.ID
+}
 
 ClassMethod GenerateLink() As %String
 {
@@ -34,9 +40,9 @@ ClassMethod GenerateLink() As %String
     Return link
 }
 
-Query ByLink(Link As %String = "") As %SQLQuery(CONTAINID = 1, ROWSPEC = "ID:%Integer,Title:%String,Link:%String,AvailableFrom:%PosixTime,AvailableTo:%PosixTime,JsonSchema:%String,User:%Integer") [ SqlName = FC_Form_ByLink, SqlProc ]
+Query ByLink(Link As %String = "") As %SQLQuery(CONTAINID = 1, ROWSPEC = "ID:%Integer") [ SqlName = FC_Form_ByLink, SqlProc ]
 {
-SELECT ID, Title, Link, AvailableFrom, AvailableTo, JsonSchema, "User"
+SELECT ID
 FROM FormsConstructor.Form
 WHERE (%EXACT(Link) %STARTSWITH :Link)
 }

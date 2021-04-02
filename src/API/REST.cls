@@ -9,9 +9,11 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 {
 <Routes>
       <Route Url="/users" Method="PUT" Call="CreateUser"/>
+      <Route Url="/users" Method="GET" Call="GetUserByEmail"/>
       <Route Url="/users/:UserID/forms" Method="PUT" Call="PutForm"/>
       <Route Url="/users/:UserID/forms" Method="GET" Call="GetForms"/>
-      <Route Url="/forms/:FormLink" Method="GET" Call="GetFormByLink"/>
+      <Route Url="/forms" Method="GET" Call="GetFormByLink"/>
+      <Route Url="/forms/:FormID" Method="GET" Call="GetForm"/>
       <Route Url="/forms/:FormID/fields" Method="GET" Call="GetFieldsByForm"/>
       <Route Url="/forms/:FormID/submissions" Method="PUT" Call="PutSubmission"/>
       <Route Url="/forms/:FormID/submissions" Method="GET" Call="GetFormSubmissions"/>
@@ -99,9 +101,26 @@ ClassMethod GetForms(UserID As %Integer) As %Status
    Quit $$$OK
 }
 
-ClassMethod GetFormByLink(FormLink As %String) As %Status
+ClassMethod GetForm(FormID As %Integer) As %Status
 {
     Set sc = $$$OK
+    try {
+        Set form = ##class(FormsConstructor.Form).%OpenId(FormID)
+        Do form.%JSONExport()
+    } catch ex {
+        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
+        Set ret = {}
+        Set ret.status = status
+        Write ret.%ToJSON()
+        Return ex
+    }
+    Return sc
+}
+
+ClassMethod GetFormByLink() As %Status
+{
+    Set sc = $$$OK
+    Set FormLink = $GET(%request.Data("link",1))
     Try {
         Set statement=##class(%SQL.Statement).%New()
         Set status=statement.%PrepareClassQuery("FormsConstructor.Form","ByLink")
@@ -109,14 +128,7 @@ ClassMethod GetFormByLink(FormLink As %String) As %Status
         Set stResults=statement.%Execute(FormLink)
         Do stResults.%Next()
         $$$ThrowOnError(stResults)
-        Set form = ##class(FormsConstructor.Form).%New()
-        Set form.ID = stResults.%Get("ID")
-        Set form.Title = stResults.%Get("Title")
-        Set form.Link = stResults.%Get("Link")
-        Set form.AvailableFrom = stResults.%Get("AvailableFrom")
-        Set form.AvailableTo = stResults.%Get("AvailableTo")
-        Set form.JsonSchema = stResults.%Get("JsonSchema")
-        Set form.UserID = stResults.%Get("User")
+        Set form = ##class(FormsConstructor.Form).%OpenId(stResults.%Get("ID"))
         Set sc = form.%JSONExport()
         $$$ThrowOnError(sc)
     } Catch ex {
@@ -192,10 +204,20 @@ ClassMethod PutSubmission(FormID As %Integer) As %Status
     Return sc
 }
 
+ClassMethod GetUserByEmail() As %Status
+{
+    Set sc = $$$OK
+    Set email = $GET(%request.Data("email",1))
+    Set user = ##class(FormsConstructor.User).GetUserByEmail(email)
+    Do user.%JSONExport()
+    // do something
+    Return sc
+}
+
 ClassMethod GetFormSubmissions(FormID As %Integer) As %Status
 {
     Set sc = $$$OK
-    try {
+    Try {
         Set submissions = ##class(FormsConsctructor.Submissions).%New()
         Set form = ##class(FormsConstructor.Form).%OpenId(FormID)
         Set key = ""
@@ -208,7 +230,7 @@ ClassMethod GetFormSubmissions(FormID As %Integer) As %Status
             }
         } While (key '= "")
         Do submissions.%JSONExport()
-    } catch ex {
+    } Catch ex {
         Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
         Set ret = {}
         Set ret.status = status
