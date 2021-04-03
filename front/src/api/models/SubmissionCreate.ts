@@ -7,7 +7,6 @@ import type { NumberRecordCreate } from './NumberRecordCreate';
 import type { TextRecordCreate } from './TextRecordCreate';
 
 export type SubmissionCreate = {
-    date?: string;
+    date?: number;
     records?: Array<(FlagRecordCreate | TextRecordCreate | NumberRecordCreate)>;
-    form_id?: number;
 }

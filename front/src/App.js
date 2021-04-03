@@ -57,9 +57,10 @@ const App = () => {
 							</Route>
 							<Route path="/forms">
 								<Header selected={['forms']} userEmail={userEmail} />
-								<FormPage />
+								<FormsPage />
 							</Route>
 							<Route path="/answers/:id">
+								<Header selected={[]} userEmail={userEmail} />
 								<AnswersPage />
 							</Route>
 							<Route path="/:id">
@@ -90,20 +91,51 @@ const AnswersPage = () => {
 }
 
 const FillPage = () => {
-	let { id } = useParams();
+	let { link } = useParams();
+	const [schema, setSchema] = React.useState({});
+	const [formId, setFormId] = React.useState(null);
+
+	React.useEffect(() => {
+		const fetch = async () => {
+			const res = await api.getFormByLink(link);
+			handle_errors(res);
+			setSchema(res.json_schema);
+			setFormId(res.id);
+		};
+		fetch();
+	}, []);
+
+	const onSubmit = async (formData) => {
+		const res = await api.getFormFields(formId);
+		handle_errors(res);
+		const fields = res.fields.reduce((fields, f) =>
+			({ [f.title]: f, ...fields }), {});
+		console.log(fields);
+		const submission = {
+			date: moment().unix(),
+			records: Object.entries(formData).map(([name, val]) => ({
+				field_id: fields[name].field_id,
+				value: val
+			}))
+		};
+		console.log(submission);
+		const res = await api.createFormSubmission(formId, submission);
+		handle_errors(res);
+	};
+
 	return (
 		<div>
-			<h1>Form id: {id}</h1>
-			<FormFiller formSchema={formExample} />
+			<h1>Form link: {link}</h1>
+			<FormFiller formSchema={schema} onSubmit={onSubmit} />
 		</div>
 	);
 }
 
-const FormPage = () => {
+const FormsPage = () => {
 	const user = React.useContext(UserContext);
 	const [formList, setFormList] = React.useState([]);
 	React.useEffect(() => {
-		async function fetch() {
+		const fetch = async () => {
 			const res = await api.getForms(user.id);
 			handle_errors(res);
 			const forms = res.forms.map(f => ({
@@ -128,8 +160,18 @@ const EditorPage = () => {
 	const user = React.useContext(UserContext);
 	const history = useHistory();
 
-	const onPublish = async ({schema, dates}) => {
+	const onPublish = async ({ schema, dates }) => {
 		const [from, to] = dates;
+		const map_type = (type) => {
+			switch (type) {
+				case "boolean":
+					return "flag";
+				case "string":
+					return "text";
+				default:
+					return type;
+			}
+		}
 		const form = {
 			title: schema.title ?? "",
 			subtitle: schema.description ?? "",
@@ -140,7 +182,7 @@ const EditorPage = () => {
 				title: name,
 				subtitle: prop.title ?? "",
 				position: idx,
-				type: prop.type == "boolean" ? "flag" : prop.type
+				type: map_type(prop.type)
 			}))
 		};
 		console.log(form);
@@ -150,7 +192,7 @@ const EditorPage = () => {
 	};
 
 	return (
-		<FormEditor onPublish={onPublish}/>
+		<FormEditor onPublish={onPublish} />
 	);
 }
 

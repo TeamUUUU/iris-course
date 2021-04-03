@@ -8,7 +8,7 @@ import type { TextRecord } from './TextRecord';
 
 export type Submission = {
     id?: number;
-    date?: string;
+    date?: number;
     records?: Array<(FlagRecord | TextRecord | NumberRecord)>;
     form_id?: number;
 }
