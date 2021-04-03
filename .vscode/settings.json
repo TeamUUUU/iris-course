@@ -9,5 +9,6 @@
         "links": {
             "CurrentPage in IRISAPP": "http://${host}:${port}/csp/${namespace}/${classname}"
         }
-    }
+	},
+	"git.ignoreLimitWarning": true
 }

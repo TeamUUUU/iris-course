@@ -4,7 +4,7 @@ import React from 'react';
 import { Row, Col } from 'antd';
 import 'antd/dist/antd.css';
 
-import MonacoEditor from "react-monaco-editor";
+import Editor from "@monaco-editor/react";
 
 import { withTheme } from '@rjsf/core';
 import { Theme as AntDTheme } from '@rjsf/antd';
@@ -45,7 +45,7 @@ export const FormEditor = () => {
 			<Row>
 				<Col span={12} style={{ padding: 10 }}>
 					<h2>Form editor</h2>
-					<MonacoEditor
+					<Editor
 						language="json"
 						value={textSchema}
 						onChange={(newVal,) => setTextSchema(newVal)}
