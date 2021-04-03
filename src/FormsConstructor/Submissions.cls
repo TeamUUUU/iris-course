@@ -5,4 +5,15 @@ Parameter %JSONIGNOREINVALIDFIELD = 1;
 
 Property Submissions As list Of FormsConstructor.Submission(%JSONFIELDNAME = "submissions");
 
+Method ExportJSON() As %Status
+{
+    if (..Submissions.Count() = 0) {
+        Set empty = {"submissions": []}
+        Write empty.%ToJSON()
+        Return $$$OK
+    }
+    Set sc = ..%JSONExport() 
+    Return sc
+}
+
 }
