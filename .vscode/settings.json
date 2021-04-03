@@ -3,12 +3,13 @@
         "Dockerfile*": "dockerfile",
     },
     "objectscript.conn" :{
-        "server": "bmstu",
-        "active": true,
-        "ns": "IRISAPP",
-        "links": {
-            "CurrentPage in IRISAPP": "http://${host}:${port}/csp/${namespace}/${classname}"
-        }
+		"server": "bmstu",
+		"active": false,
+		"ns": "IRISAPP",
+		"links": {
+			"CurrentPage in IRISAPP": "http://${host}:${port}/csp/${namespace}/${classname}"
+		}
 	},
-	"git.ignoreLimitWarning": true
+	"git.ignoreLimitWarning": true,
+	"files.eol": "\n",
 }
