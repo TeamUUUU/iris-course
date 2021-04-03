@@ -305,8 +305,6 @@ components:
     NumberRecordCreate:
       type: object
       properties:
-        id:
-          type: integer
         value:
           type: number
         field_id:
