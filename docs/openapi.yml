@@ -245,9 +245,6 @@ components:
           type: string
         position:
           type: integer
-        form_id:
-          type: integer
-          format: int64
         type:
           type: string
           enum:
