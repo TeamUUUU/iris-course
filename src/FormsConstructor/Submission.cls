@@ -7,15 +7,15 @@ Property ID As %Integer(%JSONFIELDNAME = "id", %JSONINCLUDE = "OUTPUTONLY") [ Id
 
 Property Date As %PosixTime(%JSONFIELDNAME = "date");
 
-Property Records As list Of FormsConsctructor.Records(%JSONFIELDNAME = "records") [ Transient ];
+Property Records As list Of FormsConstructor.Records(%JSONFIELDNAME = "records") [ Transient ];
 
 Relationship Form As FormsConstructor.Form [ Cardinality = one, Inverse = Submissions ];
 
-Relationship TextRecords As FormsConsctructor.TextRecord(%JSONINCLUDE = "none") [ Cardinality = many, Inverse = Submission ];
+Relationship TextRecords As FormsConstructor.TextRecord(%JSONINCLUDE = "none") [ Cardinality = many, Inverse = Submission ];
 
-Relationship NumberRecords As FormsConsctructor.NumberRecord(%JSONINCLUDE = "none") [ Cardinality = many, Inverse = Submission ];
+Relationship NumberRecords As FormsConstructor.NumberRecord(%JSONINCLUDE = "none") [ Cardinality = many, Inverse = Submission ];
 
-Relationship FlagRecords As FormsConsctructor.FlagRecord(%JSONINCLUDE = "none") [ Cardinality = many, Inverse = Submission ];
+Relationship FlagRecords As FormsConstructor.FlagRecord(%JSONINCLUDE = "none") [ Cardinality = many, Inverse = Submission ];
 
 Method FetchRecords() As %Status
 {

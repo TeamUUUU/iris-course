@@ -1,4 +1,4 @@
-Class FormsConsctructor.Record Extends %JSON.Adaptor [ Abstract ]
+Class FormsConstructor.Record Extends %JSON.Adaptor [ Abstract ]
 {
 
 Property ID As %Integer(%JSONFIELDNAME = "id", %JSONINCLUDE = "OUTPUTONLY") [ Identity ];

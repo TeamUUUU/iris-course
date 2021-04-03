@@ -1,4 +1,4 @@
-Class FormsConsctructor.FlagRecord Extends (%Persistent, FormsConsctructor.Record)
+Class FormsConstructor.FlagRecord Extends (%Persistent, FormsConstructor.Record)
 {
 
 Property Value As %Boolean(%JSONFIELDNAME = "value");
@@ -24,11 +24,11 @@ Storage Default
 <Value>Submission</Value>
 </Value>
 </Data>
-<DataLocation>^FormsConsctructor.FlagRecordD</DataLocation>
+<DataLocation>^FormsConstructor.FlagRecordD</DataLocation>
 <DefaultData>FlagRecordDefaultData</DefaultData>
-<IdLocation>^FormsConsctructor.FlagRecordD</IdLocation>
-<IndexLocation>^FormsConsctructor.FlagRecordI</IndexLocation>
-<StreamLocation>^FormsConsctructor.FlagRecordS</StreamLocation>
+<IdLocation>^FormsConstructor.FlagRecordD</IdLocation>
+<IndexLocation>^FormsConstructor.FlagRecordI</IndexLocation>
+<StreamLocation>^FormsConstructor.FlagRecordS</StreamLocation>
 <Type>%Storage.Persistent</Type>
 }
 

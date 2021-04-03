@@ -1,4 +1,4 @@
-Class FormsConsctructor.Submissions Extends (%RegisteredObject, %JSON.Adaptor)
+Class FormsConstructor.Submissions Extends (%RegisteredObject, %JSON.Adaptor)
 {
 
 Parameter %JSONIGNOREINVALIDFIELD = 1;

@@ -177,17 +177,17 @@ ClassMethod PutSubmission(FormID As %Integer) As %Status
         Set iter = recordsJson.records.%GetIterator()
         While iter.%GetNext(.key , .value ) {
             If value.%Get("type") = "number" {
-                Set nr = ##class(FormsConsctructor.NumberRecord).%New()
+                Set nr = ##class(FormsConstructor.NumberRecord).%New()
                 Do nr.%JSONImport(value)
                 Do submission.NumberRecords.Insert(nr)
             } 
             If value.%Get("type") = "text" {
-                Set nr = ##class(FormsConsctructor.TextRecord).%New()
+                Set nr = ##class(FormsConstructor.TextRecord).%New()
                 Do nr.%JSONImport(value)
                 Do submission.TextRecords.Insert(nr)
             }
             If value.%Get("type") = "flag" {
-                Set nr = ##class(FormsConsctructor.FlagRecord).%New()
+                Set nr = ##class(FormsConstructor.FlagRecord).%New()
                 Do nr.%JSONImport(value)
                 Do submission.FlagRecords.Insert(nr)
             }
@@ -218,7 +218,7 @@ ClassMethod GetFormSubmissions(FormID As %Integer) As %Status
 {
     Set sc = $$$OK
     Try {
-        Set submissions = ##class(FormsConsctructor.Submissions).%New()
+        Set submissions = ##class(FormsConstructor.Submissions).%New()
         Set form = ##class(FormsConstructor.Form).%OpenId(FormID)
         Set key = ""
         Do {

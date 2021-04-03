@@ -3,7 +3,7 @@ servers:
   - url: http://localhost:9098/bmstuapi
 info:
   version: 1.0.0
-  title: Forms Consctructor API
+  title: Forms Constructor API
 paths:
   /users:
     put:

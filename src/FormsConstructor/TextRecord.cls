@@ -1,4 +1,4 @@
-Class FormsConsctructor.TextRecord Extends (%Persistent, FormsConsctructor.Record)
+Class FormsConstructor.TextRecord Extends (%Persistent, FormsConstructor.Record)
 {
 
 Property Value As %String(%JSONFIELDNAME = "value");
@@ -24,11 +24,11 @@ Storage Default
 <Value>Submission</Value>
 </Value>
 </Data>
-<DataLocation>^FormsConsctructor.TextRecordD</DataLocation>
+<DataLocation>^FormsConstructor.TextRecordD</DataLocation>
 <DefaultData>TextRecordDefaultData</DefaultData>
-<IdLocation>^FormsConsctructor.TextRecordD</IdLocation>
-<IndexLocation>^FormsConsctructor.TextRecordI</IndexLocation>
-<StreamLocation>^FormsConsctructor.TextRecordS</StreamLocation>
+<IdLocation>^FormsConstructor.TextRecordD</IdLocation>
+<IndexLocation>^FormsConstructor.TextRecordI</IndexLocation>
+<StreamLocation>^FormsConstructor.TextRecordS</StreamLocation>
 <Type>%Storage.Persistent</Type>
 }
 

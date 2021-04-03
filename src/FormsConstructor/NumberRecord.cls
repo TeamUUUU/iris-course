@@ -1,4 +1,4 @@
-Class FormsConsctructor.NumberRecord Extends (%Persistent, FormsConsctructor.Record)
+Class FormsConstructor.NumberRecord Extends (%Persistent, FormsConstructor.Record)
 {
 
 Property Value As %Float(%JSONFIELDNAME = "value");
