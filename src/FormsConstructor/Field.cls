@@ -13,7 +13,7 @@ Property Position As %Integer(%JSONFIELDNAME = "position");
 
 Relationship Form As FormsConstructor.Form [ Cardinality = one, Inverse = Fields ];
 
-Index EmployerIndex On Form;
+Index FormIndex On Form;
 
 Storage Default
 {
