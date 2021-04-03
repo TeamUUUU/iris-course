@@ -200,11 +200,13 @@ components:
           type: string
     
     UserCreate:
+      type: object
       properties:
         email:
           type: string
         
     User:
+      type: object
       properties:
         id:
           type: integer
@@ -213,6 +215,7 @@ components:
           type: string
 
     Field:
+      type: object
       properties:
         id:
           type: integer
