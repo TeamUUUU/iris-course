@@ -331,10 +331,6 @@ components:
               - $ref: "#/components/schemas/FlagRecordCreate"
               - $ref: "#/components/schemas/TextRecordCreate"
               - $ref: "#/components/schemas/NumberRecordCreate"
-        form_id:
-          type: integer
-          format: int64
-
     Submission:
       type: object
       properties:
