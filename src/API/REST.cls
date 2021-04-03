@@ -29,11 +29,8 @@ ClassMethod CreateUser() As %Status
         Do cm.%Save()
         Do cm.%JSONExport()
     } Catch ex {
-        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
-        Set ret = {}
-        Set ret.status = status
-        Write ret.%ToJSON()
-        Return ex
+        Do ##class(FormsConstructor.GeneralError).ExportException(ex)
+        return ex.AsStatus()
     }
     Quit $$$OK
 }
@@ -68,11 +65,8 @@ ClassMethod PutForm(UserID As %Integer) As %Status
 
         Do form.%JSONExport()
     } Catch ex {
-        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
-        Set ret = {}
-        Set ret.status = status
-        Write ret.%ToJSON()
-        Return ex
+        Do ##class(FormsConstructor.GeneralError).ExportException(ex)
+        return ex.AsStatus()
     }
     Quit $$$OK
 }
@@ -89,14 +83,10 @@ ClassMethod GetForms(UserID As %Integer) As %Status
                 Do forms.Forms.Insert(form)
             }
         } While (key '= "")
-
-        Do forms.%JSONExport()
+        Do forms.ExportJSON()
     } Catch ex {
-        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
-        Set ret = {}
-        Set ret.status = status
-        Write ret.%ToJSON()
-        Return ex
+        Do ##class(FormsConstructor.GeneralError).ExportException(ex)
+        return ex.AsStatus()
     }
    Quit $$$OK
 }
@@ -108,11 +98,8 @@ ClassMethod GetForm(FormID As %Integer) As %Status
         Set form = ##class(FormsConstructor.Form).%OpenId(FormID)
         Do form.%JSONExport()
     } catch ex {
-        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
-        Set ret = {}
-        Set ret.status = status
-        Write ret.%ToJSON()
-        Return ex
+        Do ##class(FormsConstructor.GeneralError).ExportException(ex)
+        return ex.AsStatus()
     }
     Return sc
 }
@@ -132,11 +119,8 @@ ClassMethod GetFormByLink() As %Status
         Set sc = form.%JSONExport()
         $$$ThrowOnError(sc)
     } Catch ex {
-        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
-        Set ret = {}
-        Set ret.status = status
-        Write ret.%ToJSON()
-        Return ex
+        Do ##class(FormsConstructor.GeneralError).ExportException(ex)
+        return ex.AsStatus()
     }
     Return sc
 }
@@ -157,11 +141,8 @@ ClassMethod GetFieldsByForm(FormID As %Integer) As %Status
 
         Do fields.%JSONExport(.str)
     } Catch ex {
-        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
-        Set ret = {}
-        Set ret.status = status
-        Write ret.%ToJSON()
-        Return ex
+        Do ##class(FormsConstructor.GeneralError).ExportException(ex)
+        return ex.AsStatus()
     }
    Quit $$$OK
 }
@@ -194,22 +175,25 @@ ClassMethod PutSubmission(FormID As %Integer) As %Status
         }
         Do submission.FormSetObjectId(FormID)
         Do submission.%Save()
+        Do submission.%JSONExport()
     } Catch ex {
-        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
-        Set ret = {}
-        Set ret.status = status
-        Write ret.%ToJSON()
-        Return ex
+        Do ##class(FormsConstructor.GeneralError).ExportException(ex)
+        return ex.AsStatus()
     }
     Return sc
 }
 
 ClassMethod GetUserByEmail() As %Status
 {
-    Set sc = $$$OK
-    Set email = $GET(%request.Data("email",1))
-    Set user = ##class(FormsConstructor.User).GetUserByEmail(email)
-    Do user.%JSONExport()
+    try {
+        Set sc = $$$OK
+        Set email = $GET(%request.Data("email",1))
+        Set user = ##class(FormsConstructor.User).GetUserByEmail(email)
+        Do user.%JSONExport()
+    } Catch ex {
+        Do ##class(FormsConstructor.GeneralError).ExportException(ex)
+        return ex.AsStatus()
+    }
     // do something
     Return sc
 }
@@ -231,11 +215,8 @@ ClassMethod GetFormSubmissions(FormID As %Integer) As %Status
         } While (key '= "")
         Do submissions.%JSONExport()
     } Catch ex {
-        Set status = $SYSTEM.Status.GetErrorText(ex.AsStatus())
-        Set ret = {}
-        Set ret.status = status
-        Write ret.%ToJSON()
-        Return ex
+        Do ##class(FormsConstructor.GeneralError).ExportException(ex)
+        return ex.AsStatus()
     }
     Return sc
 }
