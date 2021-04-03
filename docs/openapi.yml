@@ -322,8 +322,8 @@ components:
       type: object
       properties:
         date:
-          type: string
-          format: date-time
+          type: integer
+          format: int64
         records:
           type: array
           items:
@@ -342,8 +342,8 @@ components:
           type: integer
           format: int64
         date:
-          type: string
-          format: date-time
+          type: integer
+          format: int64
         records:
           type: array
           items:
