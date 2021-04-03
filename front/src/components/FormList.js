@@ -11,6 +11,10 @@ export const FormList = ({ formList}) => {
 			dataIndex: "title"
 		},
 		{
+			title: 'Description',
+			dataIndex: "description"
+		},
+		{
 			title: 'Date from',
 			dataIndex: "dateFrom"
 		},

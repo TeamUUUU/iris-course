@@ -2,6 +2,7 @@
 export const formListExample = [
 	{
 		title: "Android vs iPhone",
+		description: "What is the best smartphone on the market",
 		dateFrom: "01.01.2021",
 		dateTo: "01.03.2021",
 		link: "http://localhost:3000/8xyz12",
@@ -9,6 +10,7 @@ export const formListExample = [
 	},
 	{
 		title: "Your favourite game",
+		description: "Choosing fun's favourite game on Steam!",
 		dateFrom: "03.02.2021",
 		dateTo: "10.05.2021",
 		link: "http://localhost:3000/ejffe3",
@@ -16,6 +18,7 @@ export const formListExample = [
 	},
 	{
 		title: "Best album of 2020",
+		description: "As 2021 start we are choosing best album of 2020",
 		dateFrom: "11.01.2021",
 		dateTo: "01.03.2021",
 		link: "http://localhost:3000/ol748d",
