@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 export type FlagRecord = {
-    id?: number;
-    type?: 'flag';
-    value?: boolean;
-    field_id?: number;
+    id: number;
+    type: 'flag';
+    value: boolean;
+    field_id: number;
 }

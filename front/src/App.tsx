@@ -1,5 +1,5 @@
 
-import React, { useContext } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Link, useParams, useHistory } from "react-router-dom";
 import { Layout, Menu, Avatar } from 'antd';
 import 'antd/dist/antd.css';
@@ -9,7 +9,6 @@ import { FormAnswers } from "./components/FormAnswers";
 import { FormEditor } from "./components/FormEditor";
 import { FormList } from "./components/FormList";
 import { FormFiller } from "./components/FormFiller";
-import { formExample, answersExample, formListExample } from './testData';
 
 import { Service as api, Field, SubmissionCreate, FormCreate } from './api';
 import { getResult } from './client';
@@ -18,7 +17,7 @@ type User = { email: string, id: number };
 const UserContext = React.createContext<User>({ email: "", id: 0 });
 
 const Header: React.FC<{ selected: [string] | [], userEmail: string }> = ({ selected, userEmail }) => {
-	let user = userEmail ? userEmail[0] : '?';
+	const user = userEmail ? userEmail[0] : '?';
 	return (
 		<Layout.Header>
 			<Menu mode="horizontal" theme="dark" defaultSelectedKeys={['1']} selectedKeys={selected}>
@@ -38,7 +37,7 @@ const Header: React.FC<{ selected: [string] | [], userEmail: string }> = ({ sele
 	);
 };
 
-const userEmail = "test@example.org"
+const userEmail = "test@example.org";
 const userId = 123;
 
 const App = () => {
@@ -78,17 +77,43 @@ const App = () => {
 };
 
 const AnswersPage = () => {
-	let { id } = useParams<{ id: string }>();
+	const { link } = useParams<{ link: string }>();
+	const [schema, setSchema] = React.useState<any>();
+	type Answers = {[key: string]: (string | boolean | number)}[];
+	const [answers, setAnswers] = React.useState<Answers>();
+
+	React.useEffect(() => {
+		const fetch = async () => {
+			const res1 = await api.getFormByLink(link);
+			const form = getResult(res1);
+			const res2 = await api.getFormFields(form.id);
+			const formFields = getResult(res2);
+			const fields: Map<number, Field> = formFields.fields.reduce((fields, f) =>
+				({ [f.id]: f, ...fields }), new Map<number, Field>());
+			const res3 = await api.getFormSubmissions(form.id);
+			const formSubmissions = getResult(res3);
+			
+			const answers: Answers = formSubmissions.submissons.map(submission => (
+				submission.records.reduce((subm, record) =>
+					({ [fields.get(record.field_id)?.title || ""]: record.value, ...subm }), {})
+			));
+
+			setSchema(JSON.parse(form.json_schema));
+			setAnswers(answers);
+		};
+		fetch();
+	}, [link]);
+
 	return (
-		<div>
-			<h1>Form id: {id}</h1>
-			<FormAnswers formSchema={formExample} formAnswers={answersExample} />
-		</div>
+		<>
+			<h1>Form link: {link}</h1>
+			<FormAnswers formSchema={schema} formAnswers={answers} />
+		</>
 	);
 }
 
 const FillPage = () => {
-	let { link } = useParams<{ link: string }>();
+	const { link } = useParams<{ link: string }>();
 	const [schema, setSchema] = React.useState({});
 	const [formId, setFormId] = React.useState(0);
 
@@ -101,7 +126,7 @@ const FillPage = () => {
 			setFormId(form.id);
 		};
 		fetch();
-	}, []);
+	}, [link]);
 
 	const onSubmit = async (formData: { [key: string]: (boolean | string | number) }) => {
 		const res1 = await api.getFormFields(formId);
@@ -147,7 +172,7 @@ const FormsPage = () => {
 			setFormList(formList);
 		};
 		fetch();
-	}, []);
+	}, [user.id]);
 
 	return (
 		<FormList formList={formList} />
@@ -158,7 +183,7 @@ const EditorPage = () => {
 	const user = React.useContext(UserContext);
 	const history = useHistory();
 
-	const onPublish = async ({ schema, dates }: {schema:any, dates: [Moment, Moment]}) => {
+	const onPublish = async ({ schema, dates }: { schema: any, dates: [Moment, Moment] }) => {
 		const [from, to] = dates;
 		const map_type = (type: string) => {
 			switch (type) {
@@ -169,7 +194,7 @@ const EditorPage = () => {
 				case "number":
 					return "number";
 				default:
-					throw "Unsupported field type: " + type
+					throw Error("Unsupported field type: " + type)
 			}
 		}
 		const form: FormCreate = {
@@ -180,9 +205,9 @@ const EditorPage = () => {
 			json_schema: JSON.stringify(schema),
 			fields: Object.entries(schema.properties).map(([name, prop], idx) => ({
 				title: name,
-				subtitle: (prop as {title: string | undefined}).title ?? "",
+				subtitle: (prop as { title: string | undefined }).title ?? "",
 				position: idx,
-				type: map_type((prop as {type: string}).type)
+				type: map_type((prop as { type: string }).type)
 			}))
 		};
 		console.log(form);

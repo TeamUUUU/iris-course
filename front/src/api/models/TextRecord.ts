@@ -3,8 +3,8 @@
 /* eslint-disable */
 
 export type TextRecord = {
-    id?: number;
-    type?: 'text';
-    value?: string;
-    field_id?: number;
+    id: number;
+    type: 'text';
+    value: string;
+    field_id: number;
 }
