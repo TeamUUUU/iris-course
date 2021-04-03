@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { BrowserRouter as Router, Switch, Route, Link, useParams, useHistory } from "react-router-dom";
 import { Layout, Menu, Avatar } from 'antd';
 import 'antd/dist/antd.css';
+import moment, { Moment } from 'moment';
 
 import { FormAnswers } from "./components/FormAnswers";
 import { FormEditor } from "./components/FormEditor";
@@ -10,11 +11,13 @@ import { FormList } from "./components/FormList";
 import { FormFiller } from "./components/FormFiller";
 import { formExample, answersExample, formListExample } from './testData';
 
-import { Service as api } from './api';
+import { Service as api, Field, SubmissionCreate, FormCreate } from './api';
+import { getResult } from './client';
 
-const UserContext = React.createContext(null);
+type User = { email: string, id: number };
+const UserContext = React.createContext<User>({ email: "", id: 0 });
 
-const Header = ({ selected, userEmail }) => {
+const Header: React.FC<{ selected: [string] | [], userEmail: string }> = ({ selected, userEmail }) => {
 	let user = userEmail ? userEmail[0] : '?';
 	return (
 		<Layout.Header>
@@ -39,12 +42,12 @@ const userEmail = "test@example.org"
 const userId = 123;
 
 const App = () => {
-	const [user, setUser] = React.useState({ email: userEmail, id: userId });
+	const [user, setUser] = React.useState<User>({ email: userEmail, id: userId });
 
 	return (
 		<UserContext.Provider value={user}>
 			<Router>
-				<Layout className>
+				<Layout>
 					<Layout.Content>
 						<Switch>
 							<Route exact path="/">
@@ -74,14 +77,8 @@ const App = () => {
 	);
 };
 
-const handle_errors = (response) => {
-	if (response.error) {
-		throw response;
-	}
-};
-
 const AnswersPage = () => {
-	let { id } = useParams();
+	let { id } = useParams<{ id: string }>();
 	return (
 		<div>
 			<h1>Form id: {id}</h1>
@@ -91,36 +88,37 @@ const AnswersPage = () => {
 }
 
 const FillPage = () => {
-	let { link } = useParams();
+	let { link } = useParams<{ link: string }>();
 	const [schema, setSchema] = React.useState({});
-	const [formId, setFormId] = React.useState(null);
+	const [formId, setFormId] = React.useState(0);
 
 	React.useEffect(() => {
 		const fetch = async () => {
 			const res = await api.getFormByLink(link);
-			handle_errors(res);
-			setSchema(res.json_schema);
-			setFormId(res.id);
+			const form = getResult(res);
+			const schema = JSON.parse(form.json_schema);
+			setSchema(schema);
+			setFormId(form.id);
 		};
 		fetch();
 	}, []);
 
-	const onSubmit = async (formData) => {
-		const res = await api.getFormFields(formId);
-		handle_errors(res);
-		const fields = res.fields.reduce((fields, f) =>
-			({ [f.title]: f, ...fields }), {});
+	const onSubmit = async (formData: { [key: string]: (boolean | string | number) }) => {
+		const res1 = await api.getFormFields(formId);
+		const formFields = getResult(res1);
+		const fields: Map<string, Field> = formFields.fields.reduce((fields, f) =>
+			({ [f.title]: f, ...fields }), new Map<string, Field>());
 		console.log(fields);
-		const submission = {
+		const submission: SubmissionCreate = {
 			date: moment().unix(),
 			records: Object.entries(formData).map(([name, val]) => ({
-				field_id: fields[name].field_id,
+				field_id: fields.get(name)?.id,
 				value: val
 			}))
 		};
 		console.log(submission);
-		const res = await api.createFormSubmission(formId, submission);
-		handle_errors(res);
+		const res2 = await api.createFormSubmission(formId, submission);
+		getResult(res2);
 	};
 
 	return (
@@ -133,12 +131,12 @@ const FillPage = () => {
 
 const FormsPage = () => {
 	const user = React.useContext(UserContext);
-	const [formList, setFormList] = React.useState([]);
+	const [formList, setFormList] = React.useState<any>([]);
 	React.useEffect(() => {
 		const fetch = async () => {
 			const res = await api.getForms(user.id);
-			handle_errors(res);
-			const forms = res.forms.map(f => ({
+			const forms = getResult(res).forms;
+			const formList = forms.map(f => ({
 				id: f.id,
 				title: f.title,
 				description: f.subtitle,
@@ -146,7 +144,7 @@ const FormsPage = () => {
 				dataTo: (new Date(1000 * f.available_to)).toLocaleString(),
 				link: f.link
 			}))
-			setFormList(forms);
+			setFormList(formList);
 		};
 		fetch();
 	}, []);
@@ -160,19 +158,21 @@ const EditorPage = () => {
 	const user = React.useContext(UserContext);
 	const history = useHistory();
 
-	const onPublish = async ({ schema, dates }) => {
+	const onPublish = async ({ schema, dates }: {schema:any, dates: [Moment, Moment]}) => {
 		const [from, to] = dates;
-		const map_type = (type) => {
+		const map_type = (type: string) => {
 			switch (type) {
 				case "boolean":
 					return "flag";
 				case "string":
 					return "text";
+				case "number":
+					return "number";
 				default:
-					return type;
+					throw "Unsupported field type: " + type
 			}
 		}
-		const form = {
+		const form: FormCreate = {
 			title: schema.title ?? "",
 			subtitle: schema.description ?? "",
 			available_from: from.unix(),
@@ -180,14 +180,14 @@ const EditorPage = () => {
 			json_schema: JSON.stringify(schema),
 			fields: Object.entries(schema.properties).map(([name, prop], idx) => ({
 				title: name,
-				subtitle: prop.title ?? "",
+				subtitle: (prop as {title: string | undefined}).title ?? "",
 				position: idx,
-				type: map_type(prop.type)
+				type: map_type((prop as {type: string}).type)
 			}))
 		};
 		console.log(form);
 		const res = await api.createForm(user.id, form);
-		handle_errors(res);
+		getResult(res);
 		history.push("/forms");
 	};
 

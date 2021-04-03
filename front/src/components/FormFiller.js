@@ -10,6 +10,6 @@ const defOnSubmit = data => console.log(data);
 export const FormFiller = ({formSchema, onSubmit = defOnSubmit}) => {
 
 	return (
-		<Form schema={formSchema} onSubmit={({formData},) => onSubmit(formData)} />
+		<Form schema={formSchema} onSubmit={({formData}) => onSubmit(formData)} />
 	);
 }

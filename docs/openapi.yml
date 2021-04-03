@@ -198,6 +198,7 @@ components:
       properties:
         error:
           type: string
+      required: [error]
     
     UserCreate:
       type: object
@@ -213,6 +214,7 @@ components:
           format: int64
         email:
           type: string
+      required: [id, email]
 
     Field:
       type: object
@@ -235,6 +237,7 @@ components:
             - "number"
             - "text"
             - "flag"
+      required: [id, title, subtitle, position, form_id, type]
 
     FieldCreate:
       type: object
@@ -350,12 +353,16 @@ components:
         form_id:
           type: integer
           format: int64
+      required: [id, date, records, form_id]
 
     Submissions:
       type: object 
       properties:
-        items:
-          $ref: "#/components/schemas/Submission"
+        submissons:
+          type: array
+          items:
+            $ref: "#/components/schemas/Submission"
+      required: [submissons]
 
     Form:
       type: object
@@ -377,6 +384,7 @@ components:
           type: string
         link:
           type: string
+      required: [id, title, subtitle, available_from, available_to, json_schema, link]
 
     FormCreate:
       type: object
@@ -405,6 +413,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Form"
+      required: [forms]
 
     Fields:
       type: object
@@ -413,6 +422,7 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Field"
+      required: [fields]
 
   parameters:
     UserID:

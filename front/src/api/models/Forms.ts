@@ -5,5 +5,5 @@
 import type { Form } from './Form';
 
 export type Forms = {
-    forms?: Array<Form>;
+    forms: Array<Form>;
 }

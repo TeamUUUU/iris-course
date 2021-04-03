@@ -3,5 +3,5 @@
 /* eslint-disable */
 
 export type GeneralError = {
-    error?: string;
+    error: string;
 }

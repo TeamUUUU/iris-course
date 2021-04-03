@@ -1,5 +1,5 @@
 {
-  "name": "front2",
+  "name": "front",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -29,7 +29,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate": "yarn redoc-cli bundle --output ../docs/redoc-static.html ../docs/openapi.yml &&yarn openapi --useUnionTypes -i ../docs/openapi.yml -o ./src/api"
+    "generate": "yarn redoc-cli bundle --output ../docs/redoc-static.html ../docs/openapi.yml && yarn openapi --useUnionTypes -i ../docs/openapi.yml -o ./src/api"
   },
   "eslintConfig": {
     "extends": [

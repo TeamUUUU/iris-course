@@ -5,5 +5,5 @@
 import type { Field } from './Field';
 
 export type Fields = {
-    fields?: Array<Field>;
+    fields: Array<Field>;
 }
