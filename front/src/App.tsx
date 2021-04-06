@@ -25,7 +25,7 @@ const useUser = () => {
 	return user;
 };
 
-const Header: React.FC<{ selected: string[]}> = ({ selected }) => {
+const Header: React.FC<{ selected: string[] }> = ({ selected }) => {
 	const user = React.useContext(UserContext);
 	const loggedIn = user !== null;
 
@@ -118,17 +118,22 @@ const AnswersPage = () => {
 		const fetch = async () => {
 			const res1 = await api.getFormByLink(link);
 			const form = getResult(res1);
+			console.log(form);
 			const res2 = await api.getFormFields(form.id);
 			const formFields = getResult(res2);
-			const fields: {[key: number]: Field} = formFields.fields.reduce((fields, f) =>
+			console.log(formFields);
+			const fields: { [key: number]: Field } = formFields.fields.reduce((fields, f) =>
 				({ [f.id]: f, ...fields }), {});
+			console.log(fields);
 			const res3 = await api.getFormSubmissions(form.id);
 			const formSubmissions = getResult(res3);
+			console.log(formSubmissions);
 
 			const answers: Answers = formSubmissions.submissons.map(submission => (
 				submission.records.reduce((subm, record) =>
 					({ [fields[record.field_id]?.title || ""]: record.value, ...subm }), {})
 			));
+			console.log(answers);
 
 			setSchema(JSON.parse(form.json_schema));
 			setAnswers(answers);
@@ -163,7 +168,7 @@ const FillPage = () => {
 	const onSubmit = async (formData: { [key: string]: (boolean | string | number) }) => {
 		const res1 = await api.getFormFields(formId);
 		const formFields = getResult(res1);
-		const fields: {[key: string]: Field} = formFields.fields.reduce((fields, f) =>
+		const fields: { [key: string]: Field } = formFields.fields.reduce((fields, f) =>
 			({ [f.title]: f, ...fields }), {});
 		console.log(fields);
 		const submission: SubmissionCreate = {
