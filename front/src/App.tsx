@@ -87,7 +87,7 @@ const App = () => {
 								<Header selected={['forms']} />
 								<FormsPage />
 							</Route>
-							<Route path="/answers/:link">
+							<Route path="/answers/:id">
 								<Header selected={[]} />
 								<AnswersPage />
 							</Route>
@@ -109,14 +109,14 @@ const App = () => {
 };
 
 const AnswersPage = () => {
-	const { link } = useParams<{ link: string }>();
+	const { id } = useParams<{ id: string }>();
 	const [schema, setSchema] = React.useState<any>();
 	type Answers = { [key: string]: (string | boolean | number) }[];
 	const [answers, setAnswers] = React.useState<Answers>();
 
 	React.useEffect(() => {
 		const fetch = async () => {
-			const res1 = await api.getFormByLink(link);
+			const res1 = await api.getFormById(Number(id));
 			const form = getResult(res1);
 			console.log(form);
 			const res2 = await api.getFormFields(form.id);
@@ -139,11 +139,11 @@ const AnswersPage = () => {
 			setAnswers(answers);
 		};
 		fetch();
-	}, [link]);
+	}, [id]);
 
 	return (
 		<>
-			<h1>Form link: {link}</h1>
+			<h1>Form id: {id}</h1>
 			<FormAnswers formSchema={schema} formAnswers={answers} />
 		</>
 	);
