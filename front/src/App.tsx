@@ -120,14 +120,14 @@ const AnswersPage = () => {
 			const form = getResult(res1);
 			const res2 = await api.getFormFields(form.id);
 			const formFields = getResult(res2);
-			const fields: Map<number, Field> = formFields.fields.reduce((fields, f) =>
-				({ [f.id]: f, ...fields }), new Map<number, Field>());
+			const fields: {[key: number]: Field} = formFields.fields.reduce((fields, f) =>
+				({ [f.id]: f, ...fields }), {});
 			const res3 = await api.getFormSubmissions(form.id);
 			const formSubmissions = getResult(res3);
 
 			const answers: Answers = formSubmissions.submissons.map(submission => (
 				submission.records.reduce((subm, record) =>
-					({ [fields.get(record.field_id)?.title || ""]: record.value, ...subm }), {})
+					({ [fields[record.field_id]?.title || ""]: record.value, ...subm }), {})
 			));
 
 			setSchema(JSON.parse(form.json_schema));
@@ -163,13 +163,13 @@ const FillPage = () => {
 	const onSubmit = async (formData: { [key: string]: (boolean | string | number) }) => {
 		const res1 = await api.getFormFields(formId);
 		const formFields = getResult(res1);
-		const fields: Map<string, Field> = formFields.fields.reduce((fields, f) =>
-			({ [f.title]: f, ...fields }), new Map<string, Field>());
+		const fields: {[key: string]: Field} = formFields.fields.reduce((fields, f) =>
+			({ [f.title]: f, ...fields }), {});
 		console.log(fields);
 		const submission: SubmissionCreate = {
 			date: moment().unix(),
 			records: Object.entries(formData).map(([name, val]) => ({
-				field_id: fields.get(name)?.id,
+				field_id: fields[name]?.id,
 				value: val
 			}))
 		};
