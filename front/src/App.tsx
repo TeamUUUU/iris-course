@@ -87,7 +87,7 @@ const App = () => {
 								<Header selected={['forms']} />
 								<FormsPage />
 							</Route>
-							<Route path="/answers/:id">
+							<Route path="/answers/:link">
 								<Header selected={[]} />
 								<AnswersPage />
 							</Route>
@@ -97,7 +97,7 @@ const App = () => {
 							<Route path="/sign_up">
 								<AuthPage signIn={false} setUser={setUser} />
 							</Route>
-							<Route path="/:id">
+							<Route path="/:link">
 								<FillPage />
 							</Route>
 						</Switch>
