@@ -30,7 +30,7 @@ ClassMethod CreateUser() As %Status
         Do cm.%JSONExport()
     } Catch ex {
         Do ##class(FormsConstructor.GeneralError).ExportException(ex)
-        return ex.AsStatus()
+        Return ex
     }
     Quit $$$OK
 }
@@ -66,7 +66,7 @@ ClassMethod PutForm(UserID As %Integer) As %Status
         Do form.%JSONExport()
     } Catch ex {
         Do ##class(FormsConstructor.GeneralError).ExportException(ex)
-        return ex.AsStatus()
+        Return ex
     }
     Quit $$$OK
 }
@@ -86,7 +86,7 @@ ClassMethod GetForms(UserID As %Integer) As %Status
         Do forms.ExportJSON()
     } Catch ex {
         Do ##class(FormsConstructor.GeneralError).ExportException(ex)
-        return ex.AsStatus()
+        Return ex
     }
    Quit $$$OK
 }
@@ -94,12 +94,12 @@ ClassMethod GetForms(UserID As %Integer) As %Status
 ClassMethod GetForm(FormID As %Integer) As %Status
 {
     Set sc = $$$OK
-    try {
+    Try {
         Set form = ##class(FormsConstructor.Form).%OpenId(FormID)
         Do form.%JSONExport()
-    } catch ex {
+    } Catch ex {
         Do ##class(FormsConstructor.GeneralError).ExportException(ex)
-        return ex.AsStatus()
+        Return ex
     }
     Return sc
 }
@@ -120,7 +120,7 @@ ClassMethod GetFormByLink() As %Status
         $$$ThrowOnError(sc)
     } Catch ex {
         Do ##class(FormsConstructor.GeneralError).ExportException(ex)
-        return ex.AsStatus()
+        Return ex
     }
     Return sc
 }
@@ -142,7 +142,7 @@ ClassMethod GetFieldsByForm(FormID As %Integer) As %Status
         Do fields.%JSONExport(.str)
     } Catch ex {
         Do ##class(FormsConstructor.GeneralError).ExportException(ex)
-        return ex.AsStatus()
+        Return ex
     }
    Quit $$$OK
 }
@@ -178,21 +178,21 @@ ClassMethod PutSubmission(FormID As %Integer) As %Status
         Do submission.%JSONExport()
     } Catch ex {
         Do ##class(FormsConstructor.GeneralError).ExportException(ex)
-        return ex.AsStatus()
+        Return ex
     }
     Return sc
 }
 
 ClassMethod GetUserByEmail() As %Status
 {
-    try {
+    Try {
         Set sc = $$$OK
         Set email = $GET(%request.Data("email",1))
         Set user = ##class(FormsConstructor.User).GetUserByEmail(email)
         Do user.%JSONExport()
     } Catch ex {
         Do ##class(FormsConstructor.GeneralError).ExportException(ex)
-        return ex.AsStatus()
+        Return ex
     }
     // do something
     Return sc
@@ -216,7 +216,7 @@ ClassMethod GetFormSubmissions(FormID As %Integer) As %Status
         Do submissions.%JSONExport()
     } Catch ex {
         Do ##class(FormsConstructor.GeneralError).ExportException(ex)
-        return ex.AsStatus()
+        Return ex
     }
     Return sc
 }
