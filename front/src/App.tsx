@@ -110,7 +110,7 @@ const App = () => {
 
 const AnswersPage = () => {
 	const { id } = useParams<{ id: string }>();
-	const [schema, setSchema] = React.useState<any>();
+	const [schema, setSchema] = React.useState<any>({});
 	type Answers = { [key: string]: (string | boolean | number) }[];
 	const [answers, setAnswers] = React.useState<Answers>();
 
