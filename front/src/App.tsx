@@ -112,7 +112,7 @@ const AnswersPage = () => {
 	const { id } = useParams<{ id: string }>();
 	const [schema, setSchema] = React.useState<any>({properties: {}});
 	type Answers = { [key: string]: (string | boolean | number) }[];
-	const [answers, setAnswers] = React.useState<Answers>();
+	const [answers, setAnswers] = React.useState<Answers>([]);
 
 	React.useEffect(() => {
 		const fetch = async () => {
