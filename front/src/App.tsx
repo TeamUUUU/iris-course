@@ -5,32 +5,58 @@ import { Layout, Menu, Avatar } from 'antd';
 import 'antd/dist/antd.css';
 import moment, { Moment } from 'moment';
 
+import { Service as api, Field, SubmissionCreate, FormCreate } from './api';
+
 import { FormAnswers } from "./components/FormAnswers";
 import { FormEditor } from "./components/FormEditor";
 import { FormList } from "./components/FormList";
 import { FormFiller } from "./components/FormFiller";
-
-import { Service as api, Field, SubmissionCreate, FormCreate } from './api';
+import { SignUpIn } from "./components/SignUpIn";
 import { getResult } from './client';
+import { useLocalStorage } from './localStorage'
 
 type User = { email: string, id: number };
-const UserContext = React.createContext<User>({ email: "", id: 0 });
+const UserContext = React.createContext<User | null>(null);
+const useUser = () => {
+	const user = React.useContext(UserContext);
+	if (!user) {
+		throw Error("No user provided!");
+	}
+	return user;
+};
 
-const Header: React.FC<{ selected: [string] | [], userEmail: string }> = ({ selected, userEmail }) => {
-	const user = userEmail ? userEmail[0] : '?';
+const Header: React.FC<{ selected: string[]}> = ({ selected }) => {
+	const user = React.useContext(UserContext);
+	const loggedIn = user !== null;
+
 	return (
 		<Layout.Header>
 			<Menu mode="horizontal" theme="dark" defaultSelectedKeys={['1']} selectedKeys={selected}>
 				<Menu.Item key="home">
 					<Link to="/">Home</Link>
 				</Menu.Item>
-				<Menu.Item key="new">
-					<Link to="/new">New Form</Link>
-				</Menu.Item>
-				<Menu.Item key="forms">
-					<Link to="/forms">Forms</Link>
-				</Menu.Item>
-				<	Menu.Item key="user"><Avatar>{user}</Avatar></Menu.Item>
+				{
+					loggedIn
+						? <>
+							<Menu.Item key="new">
+								<Link to="/new">New Form</Link>
+							</Menu.Item>
+							<Menu.Item key="forms">
+								<Link to="/forms">Forms</Link>
+							</Menu.Item>
+							<Menu.Item key="user">
+								<Avatar>{user?.email[0]}</Avatar>
+							</Menu.Item>
+						</>
+						: <>
+							<Menu.Item key="sign_in">
+								<Link to="/sign_in">Sign In</Link>
+							</Menu.Item>
+							<Menu.Item key="sign_up">
+								<Link to="/sign_up">Sign Up</Link>
+							</Menu.Item>
+						</>
+				}
 			</Menu>
 
 		</Layout.Header>
@@ -41,7 +67,7 @@ const userEmail = "test@example.org";
 const userId = 123;
 
 const App = () => {
-	const [user, setUser] = React.useState<User>({ email: userEmail, id: userId });
+	const [user, setUser] = useLocalStorage<User | null>("user", null);
 
 	return (
 		<UserContext.Provider value={user}>
@@ -50,20 +76,26 @@ const App = () => {
 					<Layout.Content>
 						<Switch>
 							<Route exact path="/">
-								<Header selected={['home']} userEmail={userEmail} />
+								<Header selected={['home']} />
 								<h1>Home !</h1>
 							</Route>
 							<Route path="/new">
-								<Header selected={['new']} userEmail={userEmail} />
+								<Header selected={['new']} />
 								<EditorPage />
 							</Route>
 							<Route path="/forms">
-								<Header selected={['forms']} userEmail={userEmail} />
+								<Header selected={['forms']} />
 								<FormsPage />
 							</Route>
 							<Route path="/answers/:id">
-								<Header selected={[]} userEmail={userEmail} />
+								<Header selected={[]} />
 								<AnswersPage />
+							</Route>
+							<Route path="/sign_in">
+								<AuthPage signIn={true} setUser={setUser} />
+							</Route>
+							<Route path="/sign_up">
+								<AuthPage signIn={false} setUser={setUser} />
 							</Route>
 							<Route path="/:id">
 								<FillPage />
@@ -79,7 +111,7 @@ const App = () => {
 const AnswersPage = () => {
 	const { link } = useParams<{ link: string }>();
 	const [schema, setSchema] = React.useState<any>();
-	type Answers = {[key: string]: (string | boolean | number)}[];
+	type Answers = { [key: string]: (string | boolean | number) }[];
 	const [answers, setAnswers] = React.useState<Answers>();
 
 	React.useEffect(() => {
@@ -92,7 +124,7 @@ const AnswersPage = () => {
 				({ [f.id]: f, ...fields }), new Map<number, Field>());
 			const res3 = await api.getFormSubmissions(form.id);
 			const formSubmissions = getResult(res3);
-			
+
 			const answers: Answers = formSubmissions.submissons.map(submission => (
 				submission.records.reduce((subm, record) =>
 					({ [fields.get(record.field_id)?.title || ""]: record.value, ...subm }), {})
@@ -155,7 +187,7 @@ const FillPage = () => {
 }
 
 const FormsPage = () => {
-	const user = React.useContext(UserContext);
+	const user = useUser();
 	const [formList, setFormList] = React.useState<any>([]);
 	React.useEffect(() => {
 		const fetch = async () => {
@@ -180,7 +212,7 @@ const FormsPage = () => {
 };
 
 const EditorPage = () => {
-	const user = React.useContext(UserContext);
+	const user = useUser();
 	const history = useHistory();
 
 	const onPublish = async ({ schema, dates }: { schema: any, dates: [Moment, Moment] }) => {
@@ -218,6 +250,31 @@ const EditorPage = () => {
 
 	return (
 		<FormEditor onPublish={onPublish} />
+	);
+}
+
+const AuthPage: React.FC<{ signIn: boolean, setUser: (user: User) => void }> = ({ signIn, setUser }) => {
+	const history = useHistory();
+
+	const onSignIn = async (data: any) => {
+		const res = await api.getUser(data.email);
+		const user = getResult(res);
+		console.log(user);
+		setUser(user);
+		history.push('/');
+	};
+
+	const onSignUp = async (data: any) => {
+		const res = await api.createUser({ email: data.email })
+		const user = getResult(res);
+		console.log(user);
+		setUser(user);
+		history.push('/');
+	};
+
+	const onSubmit = signIn ? onSignIn : onSignUp;
+	return (
+		<SignUpIn onSubmit={onSubmit} />
 	);
 }
 
