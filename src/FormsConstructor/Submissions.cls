@@ -7,7 +7,7 @@ Property Submissions As list Of FormsConstructor.Submission(%JSONFIELDNAME = "su
 
 Method ExportJSON() As %Status
 {
-    if (..Submissions.Count() = 0) {
+    If (..Submissions.Count() = 0) {
         Set empty = {"submissions": []}
         Write empty.%ToJSON()
         Return $$$OK

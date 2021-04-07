@@ -13,7 +13,7 @@ Property AvailableFrom As %PosixTime(%JSONFIELDNAME = "available_from") [ Requir
 
 Property AvailableTo As %PosixTime(%JSONFIELDNAME = "available_to") [ Required ];
 
-Property JsonSchema As %String(%JSONFIELDNAME = "json_schema") [ Required ];
+Property JsonSchema As %String(%JSONFIELDNAME = "json_schema", MAXLEN = 65536) [ Required ];
 
 Property Link As %String(%JSONFIELDNAME = "link");
 
