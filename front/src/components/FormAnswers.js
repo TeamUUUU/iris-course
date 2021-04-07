@@ -12,7 +12,7 @@ export const FormAnswers = ({ formAnswers, formSchema }) => {
 				return {
 					title: title,
 					dataIndex: field,
-					record: val => val ? '✅' : '⛔'
+					render: val => val ? '✅' : '⛔'
 				};
 			}
 			return {
