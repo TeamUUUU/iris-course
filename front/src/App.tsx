@@ -15,23 +15,31 @@ import { SignUpIn } from "./components/SignUpIn";
 import { getResult } from './client';
 import { useLocalStorage } from './localStorage'
 
-type User = { email: string, id: number };
-const UserContext = React.createContext<User | null>(null);
+type User = { email: string, id: number } | null;
+const UserContext = React.createContext<{ user: User, setUser: (user: User) => void }>({ user: null, setUser: () => { } });
 const useUser = () => {
-	const user = React.useContext(UserContext);
+	const { user, setUser } = React.useContext(UserContext);
 	if (!user) {
 		throw Error("No user provided!");
 	}
-	return user;
+	return { user: user, setUser: setUser };
 };
 
 const Header: React.FC<{ selected: string[] }> = ({ selected }) => {
-	const user = React.useContext(UserContext);
+	const { user, setUser } = React.useContext(UserContext);
 	const loggedIn = user !== null;
+	const history = useHistory();
 
+	const onMenuClick = ({ key }: any) => {
+		console.log(key);
+		if (key === 'sign_out') {
+			setUser(null);
+			history.push('/');
+		}
+	}
 	return (
 		<Layout.Header>
-			<Menu mode="horizontal" theme="dark" defaultSelectedKeys={['1']} selectedKeys={selected}>
+			<Menu mode="horizontal" theme="dark" defaultSelectedKeys={['1']} selectedKeys={selected} onClick={onMenuClick}>
 				<Menu.Item key="home">
 					<Link to="/">Home</Link>
 				</Menu.Item>
@@ -44,9 +52,16 @@ const Header: React.FC<{ selected: string[] }> = ({ selected }) => {
 							<Menu.Item key="forms">
 								<Link to="/forms">Forms</Link>
 							</Menu.Item>
-							<Menu.Item key="user">
-								<Avatar>{user?.email[0]}</Avatar>
-							</Menu.Item>
+							<Menu.SubMenu key="user"
+								icon={
+									<Avatar>{user?.email[0]}</Avatar>
+								}
+							>
+								<>
+									<Menu.Item>{user?.email}</Menu.Item>
+									<Menu.Item key="sign_out">Sign Out</Menu.Item>
+								</>
+							</Menu.SubMenu>
 						</>
 						: <>
 							<Menu.Item key="sign_in">
@@ -67,10 +82,10 @@ const userEmail = "test@example.org";
 const userId = 123;
 
 const App = () => {
-	const [user, setUser] = useLocalStorage<User | null>("user", null);
+	const [user, setUser] = useLocalStorage<User | null>("user", { email: userEmail, id: userId });
 
 	return (
-		<UserContext.Provider value={user}>
+		<UserContext.Provider value={{ user: user, setUser: setUser }}>
 			<Router>
 				<Layout>
 					<Switch>
@@ -101,13 +116,15 @@ const App = () => {
 						<Route path="/sign_in">
 							<Header selected={[]} />
 							<Layout.Content className="content">
-								<AuthPage signIn={true} setUser={setUser} />
+								<h1>Sign In</h1>
+								<AuthPage signIn={true} />
 							</Layout.Content>
 						</Route>
 						<Route path="/sign_up">
 							<Header selected={[]} />
 							<Layout.Content className="content">
-								<AuthPage signIn={false} setUser={setUser} />
+								<h1>Sign Up</h1>
+								<AuthPage signIn={false} />
 							</Layout.Content>
 						</Route>
 						<Route path="/:link">
@@ -208,10 +225,10 @@ const FillPage = () => {
 }
 
 const FormsPage = () => {
-	const user = useUser();
+	const { user } = useUser();
 	const [formList, setFormList] = React.useState<any>([]);
 	React.useEffect(() => {
-		const date_format = new Intl.DateTimeFormat(undefined, {year: 'numeric', month: 'short', day: 'numeric'});
+		const date_format = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 		const fetch = async () => {
 			const res = await api.getForms(user.id);
 			const forms = getResult(res).forms;
@@ -234,7 +251,7 @@ const FormsPage = () => {
 };
 
 const EditorPage = () => {
-	const user = useUser();
+	const { user } = useUser();
 	const history = useHistory();
 
 	const onPublish = async ({ schema, dates }: { schema: any, dates: [Moment, Moment] }) => {
@@ -250,7 +267,7 @@ const EditorPage = () => {
 				default:
 					throw Error("Unsupported field type: " + type)
 			}
-		}		
+		}
 		const form: FormCreate = {
 			title: schema.title ?? "",
 			subtitle: schema.description ?? "",
@@ -275,8 +292,9 @@ const EditorPage = () => {
 	);
 }
 
-const AuthPage: React.FC<{ signIn: boolean, setUser: (user: User) => void }> = ({ signIn, setUser }) => {
+const AuthPage: React.FC<{ signIn: boolean }> = ({ signIn }) => {
 	const history = useHistory();
+	const { setUser } = React.useContext(UserContext);
 
 	const onSignIn = async (data: any) => {
 		const res = await api.getUser(data.email);
