@@ -190,7 +190,8 @@ const FillPage = () => {
 			date: moment().unix(),
 			records: Object.entries(formData).map(([name, val]) => ({
 				field_id: fields[name]?.id,
-				value: val
+				value: val,
+				type: fields[name]?.type
 			}))
 		};
 		console.log(submission);
@@ -248,7 +249,7 @@ const EditorPage = () => {
 				default:
 					throw Error("Unsupported field type: " + type)
 			}
-		}
+		}		
 		const form: FormCreate = {
 			title: schema.title ?? "",
 			subtitle: schema.description ?? "",

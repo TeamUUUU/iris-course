@@ -21,8 +21,8 @@ export class Service {
      * @throws ApiError
      */
     public static async createUser(
-        requestBody: UserCreate,
-    ): Promise<User> {
+requestBody: UserCreate,
+): Promise<User> {
         const result = await __request({
             method: 'PUT',
             path: `/users`,
@@ -32,13 +32,13 @@ export class Service {
     }
 
     /**
-     * @param email
+     * @param email 
      * @returns User User Object with Email
      * @throws ApiError
      */
     public static async getUser(
-        email: string,
-    ): Promise<User> {
+email: string,
+): Promise<User> {
         const result = await __request({
             method: 'GET',
             path: `/users`,
@@ -50,16 +50,16 @@ export class Service {
     }
 
     /**
-     * @param userId
+     * @param userId 
      * @param requestBody Create form
      * @returns Form Created Form Object
      * @returns GeneralError unexpected error
      * @throws ApiError
      */
     public static async createForm(
-        userId: number,
-        requestBody: FormCreate,
-    ): Promise<Form | GeneralError> {
+userId: number,
+requestBody: FormCreate,
+): Promise<Form | GeneralError> {
         const result = await __request({
             method: 'PUT',
             path: `/users/${userId}/forms`,
@@ -69,14 +69,14 @@ export class Service {
     }
 
     /**
-     * @param userId
+     * @param userId 
      * @returns Forms Forms created by current user
      * @returns GeneralError unexpected error
      * @throws ApiError
      */
     public static async getForms(
-        userId: number,
-    ): Promise<Forms | GeneralError> {
+userId: number,
+): Promise<Forms | GeneralError> {
         const result = await __request({
             method: 'GET',
             path: `/users/${userId}/forms`,
@@ -85,14 +85,14 @@ export class Service {
     }
 
     /**
-     * @param link
+     * @param link 
      * @returns Form From description by unique link
      * @returns GeneralError unexpected error
      * @throws ApiError
      */
     public static async getFormByLink(
-        link: string,
-    ): Promise<Form | GeneralError> {
+link: string,
+): Promise<Form | GeneralError> {
         const result = await __request({
             method: 'GET',
             path: `/forms`,
@@ -104,13 +104,13 @@ export class Service {
     }
 
     /**
-     * @param formId
+     * @param formId 
      * @returns Form Form
      * @throws ApiError
      */
     public static async getFormById(
-        formId: number,
-    ): Promise<Form> {
+formId: number,
+): Promise<Form> {
         const result = await __request({
             method: 'GET',
             path: `/forms/${formId}`,
@@ -119,14 +119,14 @@ export class Service {
     }
 
     /**
-     * @param formId
+     * @param formId 
      * @returns Fields Fields of specified form
      * @returns GeneralError unexpected error
      * @throws ApiError
      */
     public static async getFormFields(
-        formId: number,
-    ): Promise<Fields | GeneralError> {
+formId: number,
+): Promise<Fields | GeneralError> {
         const result = await __request({
             method: 'GET',
             path: `/forms/${formId}/fields`,
@@ -135,14 +135,14 @@ export class Service {
     }
 
     /**
-     * @param formId
+     * @param formId 
      * @returns Submissions Submissions of specified form
      * @returns GeneralError unexpected error
      * @throws ApiError
      */
     public static async getFormSubmissions(
-        formId: number,
-    ): Promise<Submissions | GeneralError> {
+formId: number,
+): Promise<Submissions | GeneralError> {
         const result = await __request({
             method: 'GET',
             path: `/forms/${formId}/submissions`,
@@ -151,15 +151,15 @@ export class Service {
     }
 
     /**
-     * @param formId
-     * @param requestBody
+     * @param formId 
+     * @param requestBody 
      * @returns Submission Submissions of specified form
      * @throws ApiError
      */
     public static async createFormSubmission(
-        formId: number,
-        requestBody: SubmissionCreate,
-    ): Promise<Submission> {
+formId: number,
+requestBody: SubmissionCreate,
+): Promise<Submission> {
         const result = await __request({
             method: 'PUT',
             path: `/forms/${formId}/submissions`,

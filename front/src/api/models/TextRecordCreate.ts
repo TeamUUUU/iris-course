@@ -3,7 +3,7 @@
 /* eslint-disable */
 
 export type TextRecordCreate = {
-    value?: string;
-    type?: string;
-    field_id?: number;
+    value: string;
+    type: string;
+    field_id: number;
 }

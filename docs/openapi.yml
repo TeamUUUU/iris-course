@@ -309,6 +309,7 @@ components:
           type: string
         field_id:
           type: integer
+      required: [value, type, field_id]
 
     NumberRecordCreate:
       type: object
@@ -319,6 +320,7 @@ components:
           type: string
         field_id:
           type: integer
+      required: [value, type, field_id]
 
     FlagRecordCreate:
       type: object
@@ -329,6 +331,7 @@ components:
           type: string
         field_id:
           type: integer
+      required: [value, type, field_id]
 
     SubmissionCreate:
       type: object
