@@ -155,11 +155,11 @@ ClassMethod PutSubmission(FormID As %Integer) As %Status
         Set submission = ##class(FormsConstructor.Submission).%New()
         Set sc = submission.%JSONImport(%request.Content)
         $$$ThrowOnError(sc)
-        if 'submission.HasValidSubmissionDate(form) {
+        If 'submission.HasValidSubmissionDate(form) {
             Write {"error": "Submission date not in the range of form availability"}.%ToJSON() 
-            return $$$OK
+            Return $$$OK
         }
-        kill form
+        Kill form
         Set recordsJson = {}.%FromJSON(%request.Content)
         Set iter = recordsJson.records.%GetIterator()
         While iter.%GetNext(.key , .value ) {
@@ -219,7 +219,7 @@ ClassMethod GetFormSubmissions(FormID As %Integer) As %Status
                 Do submissions.Submissions.Insert(submission)
             }
         } While (key '= "")
-        Do submissions.%JSONExport()
+        Do submissions.ExportJSON()
     } Catch ex {
         Do ##class(FormsConstructor.GeneralError).ExportException(ex)
         Return ex
