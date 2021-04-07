@@ -8,17 +8,28 @@ export const FormAnswers = ({ formAnswers, formSchema }) => {
 	const columns = Object.entries(formSchema.properties)
 		.map(([field, data]) => {
 			const title = data.title ?? field;
-			if (data.type && data.type == "boolean") {
-				return {
-					title: title,
-					dataIndex: field,
-					render: val => val ? '✅' : '⛔'
-				};
+			switch (field.type) {
+				case "boolean":
+					return {
+						title: title,
+						dataIndex: field,
+						render: val => val ? '✅' : '⛔',
+						align: 'center'
+					};
+				case "number":
+					return {
+						title: title,
+						dataIndex: field,
+						align: 'right'
+					};
+
+				default:
+					return {
+						title: title,
+						dataIndex: field,
+						align: 'left'
+					};
 			}
-			return {
-				title: title,
-				dataIndex: field,
-			};
 		});
 
 	return (
