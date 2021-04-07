@@ -17,6 +17,10 @@ Relationship NumberRecords As FormsConstructor.NumberRecord(%JSONINCLUDE = "none
 
 Relationship FlagRecords As FormsConstructor.FlagRecord(%JSONINCLUDE = "none") [ Cardinality = many, Inverse = Submission ];
 
+Method HasValidSubmissionDate(form as FormsConstructor.Form) as %Boolean {
+    return (form.AvailableFrom <= ..Date) && (form.AvailableTo > ..Date)
+}
+
 // FIXME: N+1 problem on form<->submission<->records fetching
 
 Method FetchRecords() As %Status
