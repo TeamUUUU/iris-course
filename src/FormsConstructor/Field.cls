@@ -1,7 +1,7 @@
 Class FormsConstructor.Field Extends (%Persistent, %JSON.Adaptor)
 {
 
-Property ID As %Integer [ Identity ];
+Property ID As %Integer(%JSONFIELDNAME="id") [ Identity ];
 
 Property Type As %String(%JSONFIELDNAME = "type");
 
