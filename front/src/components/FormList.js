@@ -3,7 +3,7 @@ import { Table } from 'antd';
 import 'antd/dist/antd.css';
 import { Link } from "react-router-dom";
 
-export const FormList = ({ formList}) => {
+export const FormList = ({ formList }) => {
 
 	const columns = [
 		{

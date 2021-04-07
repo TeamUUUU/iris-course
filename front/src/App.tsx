@@ -219,7 +219,7 @@ const FormsPage = () => {
 				title: f.title,
 				description: f.subtitle,
 				dateFrom: (new Date(1000 * f.available_from)).toLocaleString(),
-				dataTo: (new Date(1000 * f.available_to)).toLocaleString(),
+				dateTo: (new Date(1000 * f.available_to)).toLocaleString(),
 				link: f.link
 			}))
 			setFormList(formList);
