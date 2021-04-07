@@ -73,35 +73,50 @@ const App = () => {
 		<UserContext.Provider value={user}>
 			<Router>
 				<Layout>
-					<Layout.Content>
-						<Switch>
-							<Route exact path="/">
-								<Header selected={['home']} />
+					<Switch>
+						<Route exact path="/">
+							<Header selected={['home']} />
+							<Layout.Content className="content">
 								<h1>Home !</h1>
-							</Route>
-							<Route path="/new">
-								<Header selected={['new']} />
+							</Layout.Content>
+						</Route>
+						<Route path="/new">
+							<Header selected={['new']} />
+							<Layout.Content className="content">
 								<EditorPage />
-							</Route>
-							<Route path="/forms">
-								<Header selected={['forms']} />
+							</Layout.Content>
+						</Route>
+						<Route path="/forms">
+							<Header selected={['forms']} />
+							<Layout.Content className="content">
 								<FormsPage />
-							</Route>
-							<Route path="/answers/:id">
-								<Header selected={[]} />
+							</Layout.Content>
+						</Route>
+						<Route path="/answers/:id">
+							<Header selected={[]} />
+							<Layout.Content className="content">
 								<AnswersPage />
-							</Route>
-							<Route path="/sign_in">
+							</Layout.Content>
+						</Route>
+						<Route path="/sign_in">
+							<Header selected={[]} />
+							<Layout.Content className="content">
 								<AuthPage signIn={true} setUser={setUser} />
-							</Route>
-							<Route path="/sign_up">
+							</Layout.Content>
+						</Route>
+						<Route path="/sign_up">
+							<Header selected={[]} />
+							<Layout.Content className="content">
 								<AuthPage signIn={false} setUser={setUser} />
-							</Route>
-							<Route path="/:link">
+							</Layout.Content>
+						</Route>
+						<Route path="/:link">
+							<Header selected={[]} />
+							<Layout.Content className="content">
 								<FillPage />
-							</Route>
-						</Switch>
-					</Layout.Content>
+							</Layout.Content>
+						</Route>
+					</Switch>
 				</Layout>
 			</Router>
 		</UserContext.Provider>
@@ -110,7 +125,7 @@ const App = () => {
 
 const AnswersPage = () => {
 	const { id } = useParams<{ id: string }>();
-	const [schema, setSchema] = React.useState<any>({properties: {}});
+	const [schema, setSchema] = React.useState<any>({ properties: {} });
 	type Answers = { [key: string]: (string | boolean | number) }[];
 	const [answers, setAnswers] = React.useState<Answers>([]);
 
