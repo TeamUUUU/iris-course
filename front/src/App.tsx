@@ -78,11 +78,8 @@ const Header: React.FC<{ selected: string[] }> = ({ selected }) => {
 	);
 };
 
-const userEmail = "test@example.org";
-const userId = 123;
-
 const App = () => {
-	const [user, setUser] = useLocalStorage<User | null>("user", { email: userEmail, id: userId });
+	const [user, setUser] = useLocalStorage<User | null>("user", null);
 
 	return (
 		<UserContext.Provider value={{ user: user, setUser: setUser }}>
