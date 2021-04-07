@@ -305,6 +305,8 @@ components:
       properties:
         value:
           type: string
+        type:
+          type: string
         field_id:
           type: integer
 
@@ -313,6 +315,8 @@ components:
       properties:
         value:
           type: number
+        type:
+          type: string
         field_id:
           type: integer
 
@@ -321,6 +325,8 @@ components:
       properties:
         value:
           type: boolean
+        type:
+          type: string
         field_id:
           type: integer
 
@@ -361,11 +367,11 @@ components:
     Submissions:
       type: object 
       properties:
-        submissons:
+        submissions:
           type: array
           items:
             $ref: "#/components/schemas/Submission"
-      required: [submissons]
+      required: [submissions]
 
     Form:
       type: object

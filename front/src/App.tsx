@@ -129,7 +129,7 @@ const AnswersPage = () => {
 			const formSubmissions = getResult(res3);
 			console.log(formSubmissions);
 
-			const answers: Answers = formSubmissions.submissons.map(submission => (
+			const answers: Answers = formSubmissions.submissions.map(submission => (
 				submission.records.reduce((subm, record) =>
 					({ [fields[record.field_id]?.title || ""]: record.value, ...subm }), {})
 			));

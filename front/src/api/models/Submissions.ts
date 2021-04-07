@@ -5,5 +5,5 @@
 import type { Submission } from './Submission';
 
 export type Submissions = {
-    submissons: Array<Submission>;
+    submissions: Array<Submission>;
 }
