@@ -8,7 +8,7 @@ export const FormAnswers = ({ formAnswers, formSchema }) => {
 	const columns = Object.entries(formSchema.properties)
 		.map(([field, data]) => {
 			const title = data.title ?? field;
-			switch (field.type) {
+			switch (data.type) {
 				case "boolean":
 					return {
 						title: title,
