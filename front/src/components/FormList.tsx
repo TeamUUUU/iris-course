@@ -3,7 +3,7 @@ import { Table } from 'antd';
 import 'antd/dist/antd.css';
 import { Link } from "react-router-dom";
 
-export const FormList = ({ formList }) => {
+export const FormList = ({ formList }: {formList: any}) => {
 
 	const columns = [
 		{
@@ -25,19 +25,19 @@ export const FormList = ({ formList }) => {
 		{
 			title: 'Link',
 			dataIndex: "link",
-			render: link => <a href={link} >{link}</a>
+			render: (link: string) => <a href={link} >{link}</a>
 		},
 		{
 			title: 'Action',
 			key: 'action',
-			render: (record) => (
+			render: (record: {id: number}) => (
 				<Link to={`/answers/${record.id}`}>View results</Link>
 			),
 		},
 	];
 
 	return (
-		<Table dataSource={formList.map((v) => {
+		<Table dataSource={formList.map((v: any) => {
 			return {
 				key: v.id,
 				...v

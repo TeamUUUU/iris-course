@@ -4,10 +4,10 @@ import React from 'react';
 import { Row, Col, Button, DatePicker } from 'antd';
 import 'antd/dist/antd.css';
 import Editor from "@monaco-editor/react";
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 
 import { withTheme } from '@rjsf/core';
-import { Theme as AntDTheme } from '@rjsf/antd';
+const { Theme: AntDTheme } = require('@rjsf/antd');
 
 const Form = withTheme(AntDTheme);
 
@@ -32,15 +32,21 @@ const defSchema = `
 }
 `;
 
-const defOnPublish = (form) => console.log(form);
+// where should I get RangePicker type?
+type Dates = [Moment, Moment] | any;
+
+const defOnPublish = (form: {schema: any, dates: Dates}) => console.log(form);
 
 export const FormEditor = ({ onPublish = defOnPublish }) => {
 
-	const [textSchema, setTextSchema] = React.useState(defSchema);
+	const [textSchema, setTextSchema] = React.useState<string | undefined>(defSchema);
 	const [schema, setSchema] = React.useState(JSON.parse(defSchema));
-	const [dates, setDates] = React.useState([moment(), moment().add(1, 'y')]);
+	const [dates, setDates] = React.useState<Dates>([moment(), moment().add(1, 'y')]);
 
 	React.useEffect(() => {
+		if (!textSchema) {
+			return;
+		}
 		try {
 			const parsedSchema = JSON.parse(textSchema);
 			setSchema(parsedSchema);

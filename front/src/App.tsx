@@ -7,10 +7,10 @@ import moment, { Moment } from 'moment';
 
 import { Service as api, Field, SubmissionCreate, FormCreate } from './api';
 
-import { FormAnswers } from "./components/FormAnswers";
+import { FormAnswers, Answers } from "./components/FormAnswers";
 import { FormEditor } from "./components/FormEditor";
 import { FormList } from "./components/FormList";
-import { FormFiller } from "./components/FormFiller";
+import { FormFiller, FormData } from "./components/FormFiller";
 import { SignUpIn } from "./components/SignUpIn";
 import { getResult } from './client';
 import { useLocalStorage } from './localStorage'
@@ -140,7 +140,6 @@ const App = () => {
 const AnswersPage = () => {
 	const { id } = useParams<{ id: string }>();
 	const [schema, setSchema] = React.useState<any>({ properties: {} });
-	type Answers = { [key: string]: (string | boolean | number) }[];
 	const [answers, setAnswers] = React.useState<Answers>([]);
 
 	React.useEffect(() => {
@@ -180,7 +179,7 @@ const AnswersPage = () => {
 
 const FillPage = () => {
 	const { link } = useParams<{ link: string }>();
-	const [schema, setSchema] = React.useState({});
+	const [schema, setSchema] = React.useState<any>({});
 	const [formId, setFormId] = React.useState(0);
 
 	React.useEffect(() => {
@@ -194,7 +193,7 @@ const FillPage = () => {
 		fetch();
 	}, [link]);
 
-	const onSubmit = async (formData: { [key: string]: (boolean | string | number) }) => {
+	const onSubmit = async (formData: FormData) => {
 		const res1 = await api.getFormFields(formId);
 		const formFields = getResult(res1);
 		const fields: { [key: string]: Field } = formFields.fields.reduce((fields, f) =>
