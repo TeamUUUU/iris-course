@@ -23,7 +23,17 @@ const App = () => {
 						<Route exact path="/">
 							<Header selected={['home']} />
 							<Layout.Content className="content">
-								<h1>Home !</h1>
+								<h1>Forms Constructor</h1>
+								<h4>Code-First Typesafe Solution to Forms Building with JSON Schema</h4>
+								<ul>
+									<li><a href="https://github.com/TeamUUUU/iris-course">Source Code</a></li>
+									<li>Developers 
+									<ul>
+										<li><a href="https://github.com/Dnnd">Danila Maslennikov</a></li>	
+										<li><a href="https://github.com/Mvwivs">Vladimir Mazov</a></li>	
+									</ul>
+									</li>
+								</ul>
 							</Layout.Content>
 						</Route>
 						<Route path="/new">
