@@ -34,7 +34,7 @@ export const FormAnswers = ({ formAnswers, formSchema }: { formAnswers: Answers,
 		});
 
 	return (
-		<Table dataSource={formAnswers.map((v, idx) => {
+		<Table expandable={{childrenColumnName: (Symbol() as any)}} dataSource={formAnswers.map((v, idx) => {
 			return {
 				key: idx,
 				...v
